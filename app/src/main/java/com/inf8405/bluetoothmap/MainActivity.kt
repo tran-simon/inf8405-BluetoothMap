@@ -13,6 +13,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
 import android.widget.ToggleButton
@@ -42,9 +43,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     private lateinit var bluetoothAdapter: BluetoothAdapter
     private lateinit var toggleButton: ToggleButton
     private lateinit var deviceList: ListView
+    private lateinit var arrayAdapter: ArrayAdapter<BluetoothDevice>
 
     private var locationPermissionGranted = false
     private var discovering = false
+    private var devices: MutableList<BluetoothDevice> = mutableListOf()
 
     private val receiver = object : BroadcastReceiver() {
         @SuppressLint("MissingPermission")
@@ -54,8 +57,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
                     @Suppress("DEPRECATION") val device: BluetoothDevice? =
                         intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
 
-                    // TODO: Save device info
-                    Log.d("BluetoothMap", "Device found: $device")
+                    if (device != null) {
+                        devices += device
+                        arrayAdapter.notifyDataSetChanged()
+                    }
                 }
                 BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
                     Log.i("BluetoothMap", "Bluetooth discovery finished. Restarting? $discovering")
@@ -90,6 +95,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         registerReceiver(receiver, IntentFilter(BluetoothDevice.ACTION_FOUND))
         registerReceiver(receiver, IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED))
         registerReceiver(receiver, IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED))
+
+        arrayAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, devices)
+        deviceList.adapter = arrayAdapter
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
