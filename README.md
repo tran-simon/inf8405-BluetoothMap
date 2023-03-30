@@ -13,6 +13,8 @@
 
 - [x] Splash Screen
 - [x] Map with current location
+- [x] Scan devices with bluetooth
+- [ ] Get device information
 - [ ] Map pin for each device
 - [ ] Device list
 - [ ] Device details when the user clicks a pin or a list item
