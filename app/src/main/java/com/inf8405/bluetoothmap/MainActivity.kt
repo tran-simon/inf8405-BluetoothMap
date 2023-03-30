@@ -10,7 +10,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -23,6 +22,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -30,10 +30,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.tasks.Task
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import java.util.Objects;
-import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     ActivityCompat.OnRequestPermissionsResultCallback {
@@ -49,13 +46,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var bluetoothAdapter: BluetoothAdapter
     private lateinit var toggleButton: ToggleButton
-    private lateinit var deviceList: ListView
+    private lateinit var deviceListView: ListView
     private lateinit var arrayAdapter: ArrayAdapter<BluetoothDevice>
 
     private var locationPermissionGranted = false
     private var discovering = false
-    private var devices: MutableList<BluetoothDevice> = mutableListOf()
-    private val markers: ArrayList<Marker> = ArrayList()
+
+    // TODO: We should probably replace the hashmap with a list, sorted by latlng, and add a device to an existing list if it's close enough
+    private var devices: HashMap<Int, DevicesData> = hashMapOf()
+    private var devicesList: MutableList<BluetoothDevice> = mutableListOf()
 
     private val receiver = object : BroadcastReceiver() {
         @SuppressLint("MissingPermission")
@@ -65,23 +64,20 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
                     @Suppress("DEPRECATION") val device: BluetoothDevice? =
                         intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
 
-                    if (device != null ) {
-                        devices += device
-                        arrayAdapter.notifyDataSetChanged()
-                        val locationResult: Task<Location> =
-                            fusedLocationProviderClient.lastLocation
-                        locationResult.addOnCompleteListener{ task ->
+                    if (device != null) {
+
+                        fusedLocationProviderClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null).addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 val location = task.result
                                 if (location != null) {
-                                    Log.i(TAG, "LatLng " + location.latitude)
-                                    addPins(device.address, LatLng(location.latitude, location.longitude))
-                                } else {
-                                    Log.i(TAG, "No last location")
+                                    Log.i(TAG, "Found device $device at location $location")
+
+                                    // TODO: Do not add if already scanned
+                                    addDevice(device, LatLng(location.latitude, location.longitude))
+                                    return@addOnCompleteListener
                                 }
-                            } else {
-                                Log.i(TAG, "get failed with ", task.exception)
                             }
+                            Log.e(TAG, "Could not get current location", task.exception)
                         }
                     }
                 }
@@ -105,7 +101,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         toggleButton = findViewById(R.id.toggleButton)
-        deviceList = findViewById(R.id.listView)
+        deviceListView = findViewById(R.id.listView)
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -119,8 +115,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         registerReceiver(receiver, IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED))
         registerReceiver(receiver, IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED))
 
-        arrayAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, devices)
-        deviceList.adapter = arrayAdapter
+        arrayAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, devicesList)
+        deviceListView.adapter = arrayAdapter
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -218,18 +214,27 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     fun toggleDeviceList(view: View) {
-        deviceList.visibility = if (deviceList.visibility == View.GONE) View.VISIBLE else View.GONE
+        deviceListView.visibility = if (deviceListView.visibility == View.GONE) View.VISIBLE else View.GONE
         val fab = (view as FloatingActionButton)
-        fab.setImageResource(if (deviceList.visibility == View.VISIBLE) R.drawable.baseline_expand_less_24 else R.drawable.baseline_expand_more_24)
+        fab.setImageResource(if (deviceListView.visibility == View.VISIBLE) R.drawable.baseline_expand_less_24 else R.drawable.baseline_expand_more_24)
     }
 
-    fun addPins(deviceMACAddress: String, location: LatLng) {
-        val marker: Marker? = map.addMarker(
-            MarkerOptions()
-                .position(location)
-                .title(deviceMACAddress)
-        )
-        if (marker != null)
-            markers.add(marker);
+    fun addDevice(bluetoothDevice: BluetoothDevice, location: LatLng) {
+        val devicesData = devices.getOrPut(location.hashCode()) {
+            val marker: Marker = map.addMarker(
+                MarkerOptions()
+                    .position(location)
+            ) ?: throw Exception("Could not add marker")
+
+            DevicesData(marker, mutableListOf())
+        }
+
+        devicesList += bluetoothDevice
+        arrayAdapter.notifyDataSetChanged()
+
+        devicesData.devices += bluetoothDevice
+
+        devicesData.marker.title = devicesData.devices.joinToString("\n") { it.address}
+
     }
 }
