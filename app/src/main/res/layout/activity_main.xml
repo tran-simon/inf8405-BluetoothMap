@@ -6,30 +6,73 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-    <ToggleButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/toggleButton"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:textOn="@string/scan_on"
-            android:textOff="@string/scan_off"
-            android:enabled="false"
-            android:onClick="toggleScanning" />
-
-    <androidx.fragment.app.FragmentContainerView xmlns:map="http://schemas.android.com/apk/res-auto"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/map"
-            tools:context=".MapsFragment"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            map:uiCompass="true" />
+            app:layout_constraintEnd_toEndOf="parent">
 
+        <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:animateLayoutChanges="true">
+
+            <ListView
+                    android:id="@+id/listView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:visibility="gone" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/mapContainer"
+                    tools:context=".MapsFragment"
+                    android:name="com.google.android.gms.maps.SupportMapFragment">
+
+                <ToggleButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/toggleButton"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:layout_marginStart="8dp"
+                        android:textOn="@string/scan_on"
+                        android:textOff="@string/scan_off"
+                        android:enabled="false"
+                        android:onClick="toggleScanning"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginTop="8dp" />
+
+                <androidx.fragment.app.FragmentContainerView xmlns:map="http://schemas.android.com/apk/res-auto"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/map"
+                        tools:context=".MapsFragment"
+                        android:name="com.google.android.gms.maps.SupportMapFragment"
+                        map:uiCompass="true" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:id="@+id/floatingActionButton"
+                android:focusable="true"
+                android:contentDescription="@string/fab_description"
+                android:src="@drawable/baseline_expand_more_24"
+                android:onClick="toggleDeviceList"
+                app:layout_anchor="@id/mapContainer"
+                app:layout_anchorGravity="center_horizontal|top"
+                android:layout_marginTop="8dp" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

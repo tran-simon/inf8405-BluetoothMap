@@ -3,4 +3,5 @@
     <string name="splash_screen_image">Splash Screen Image</string>
     <string name="scan_on">Scanning…</string>
     <string name="scan_off">Scan?</string>
+    <string name="fab_description">Toggle device list</string>
 </resources>

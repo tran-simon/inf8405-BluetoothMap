@@ -13,6 +13,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ListView
 import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
@@ -25,10 +26,10 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback,
-    ActivityCompat.OnRequestPermissionsResultCallback
-    {
+    ActivityCompat.OnRequestPermissionsResultCallback {
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
         private const val BLUETOOTH_PERMISSION_REQUEST_CODE = 2
@@ -40,6 +41,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var bluetoothAdapter: BluetoothAdapter
     private lateinit var toggleButton: ToggleButton
+    private lateinit var deviceList: ListView
 
     private var locationPermissionGranted = false
     private var discovering = false
@@ -75,6 +77,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         toggleButton = findViewById(R.id.toggleButton)
+        deviceList = findViewById(R.id.listView)
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -181,5 +184,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
             bluetoothAdapter.cancelDiscovery()
             false
         }
+    }
+
+    fun toggleDeviceList(view: View) {
+        deviceList.visibility = if (deviceList.visibility == View.GONE) View.VISIBLE else View.GONE
+        val fab = (view as FloatingActionButton)
+        fab.setImageResource(if (deviceList.visibility == View.VISIBLE) R.drawable.baseline_expand_less_24 else R.drawable.baseline_expand_more_24)
     }
 }

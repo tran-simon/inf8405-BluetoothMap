@@ -17,11 +17,16 @@
 - [ ] Get device information
 - [ ] Map pin for each device
 - [ ] Device list
+    - [x] Drawer
+    - [x] FAB
 - [ ] Device details when the user clicks a pin or a list item
 - [ ] "Comment y arriver"
 - [ ] Favorites
 - [ ] Share
 - [ ] Database to save data
 - [ ] Dark mode
+    - [ ] Map
+    - [ ] FAB
+    - [ ] Action Bar
 - [ ] Report
 - [ ] APK Demo
