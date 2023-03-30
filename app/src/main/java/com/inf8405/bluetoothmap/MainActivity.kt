@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -27,11 +28,17 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.tasks.Task
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.util.Objects;
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     ActivityCompat.OnRequestPermissionsResultCallback {
     companion object {
+        private const val TAG = "BluetoothMap"
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
         private const val BLUETOOTH_PERMISSION_REQUEST_CODE = 2
         private const val DEFAULT_ZOOM = 15f
@@ -48,6 +55,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     private var locationPermissionGranted = false
     private var discovering = false
     private var devices: MutableList<BluetoothDevice> = mutableListOf()
+    private val markers: ArrayList<Marker> = ArrayList()
 
     private val receiver = object : BroadcastReceiver() {
         @SuppressLint("MissingPermission")
@@ -57,19 +65,34 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
                     @Suppress("DEPRECATION") val device: BluetoothDevice? =
                         intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
 
-                    if (device != null) {
+                    if (device != null ) {
                         devices += device
                         arrayAdapter.notifyDataSetChanged()
+                        val locationResult: Task<Location> =
+                            fusedLocationProviderClient.lastLocation
+                        locationResult.addOnCompleteListener{ task ->
+                            if (task.isSuccessful) {
+                                val location = task.result
+                                if (location != null) {
+                                    Log.i(TAG, "LatLng " + location.latitude)
+                                    addPins(device.address, LatLng(location.latitude, location.longitude))
+                                } else {
+                                    Log.i(TAG, "No last location")
+                                }
+                            } else {
+                                Log.i(TAG, "get failed with ", task.exception)
+                            }
+                        }
                     }
                 }
                 BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
-                    Log.i("BluetoothMap", "Bluetooth discovery finished. Restarting? $discovering")
+                    Log.i(TAG, "Bluetooth discovery finished. Restarting? $discovering")
                     if (discovering) {
                         bluetoothAdapter.startDiscovery()
                     }
                 }
                 BluetoothAdapter.ACTION_DISCOVERY_STARTED -> {
-                    Log.i("BluetoothMap", "Bluetooth discovery started")
+                    Log.i(TAG, "Bluetooth discovery started")
                 }
             }
         }
@@ -198,5 +221,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         deviceList.visibility = if (deviceList.visibility == View.GONE) View.VISIBLE else View.GONE
         val fab = (view as FloatingActionButton)
         fab.setImageResource(if (deviceList.visibility == View.VISIBLE) R.drawable.baseline_expand_less_24 else R.drawable.baseline_expand_more_24)
+    }
+
+    fun addPins(deviceMACAddress: String, location: LatLng) {
+        val marker: Marker? = map.addMarker(
+            MarkerOptions()
+                .position(location)
+                .title(deviceMACAddress)
+        )
+        if (marker != null)
+            markers.add(marker);
     }
 }

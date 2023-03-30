@@ -15,7 +15,7 @@
 - [x] Map with current location
 - [x] Scan devices with bluetooth
 - [ ] Get device information
-- [ ] Map pin for each device
+- [x] Map pin for each device
 - [ ] Device list
     - [x] Drawer
     - [x] FAB
