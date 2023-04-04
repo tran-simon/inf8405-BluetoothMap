@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -270,14 +271,26 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     private fun swapTheme(isChecked: Boolean) {
-        if(isChecked) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            if(::map.isInitialized) map.setMapStyle( MapStyleOptions.loadRawResourceStyle(
-                this, R.raw.dark_style) )
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            if(::map.isInitialized) map.setMapStyle( MapStyleOptions.loadRawResourceStyle(
-                this, R.raw.light_style) )
+        if(this@MainActivity::map.isInitialized) {
+            try {
+                val success: Boolean = if(isChecked) {
+                    setTheme(R.style.Theme_dark)
+                    map.setMapStyle(
+                        MapStyleOptions.loadRawResourceStyle(
+                            this, R.raw.dark_style
+                        )
+                    )
+                } else {
+                    setTheme(R.style.Theme_light)
+                    map.setMapStyle( MapStyleOptions.loadRawResourceStyle(
+                        this, R.raw.light_style) )
+                }
+                if (!success) {
+                    Log.e(TAG, "Style parsing failed.")
+                }
+            } catch (e: Resources.NotFoundException) {
+                Log.e(TAG, "Can't find style.", e)
+            }
         }
     }
 }
