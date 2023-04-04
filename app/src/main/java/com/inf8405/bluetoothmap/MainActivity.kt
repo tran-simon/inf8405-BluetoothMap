@@ -10,13 +10,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.ListView
-import android.widget.Toast
-import android.widget.ToggleButton
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -25,6 +23,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
@@ -32,10 +31,12 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
+
 class MainActivity : AppCompatActivity(), OnMapReadyCallback,
-    ActivityCompat.OnRequestPermissionsResultCallback {
+    ActivityCompat.OnRequestPermissionsResultCallback,
+    OnInfoWindowClickListener {
     companion object {
-        private const val TAG = "BluetoothMap"
+        private const val TAG = "BluetoothMap_Log"
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
         private const val BLUETOOTH_PERMISSION_REQUEST_CODE = 2
         private const val DEFAULT_ZOOM = 15f
@@ -47,14 +48,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     private lateinit var bluetoothAdapter: BluetoothAdapter
     private lateinit var toggleButton: ToggleButton
     private lateinit var deviceListView: ListView
-    private lateinit var arrayAdapter: ArrayAdapter<BluetoothDevice>
+    private lateinit var arrayAdapter: ArrayAdapter<DeviceData>
 
     private var locationPermissionGranted = false
-    private var discovering = false
+    private var discovering = true
 
-    // TODO: We should probably replace the hashmap with a list, sorted by latlng, and add a device to an existing list if it's close enough
-    private var devices: HashMap<Int, DevicesData> = hashMapOf()
-    private var devicesList: MutableList<BluetoothDevice> = mutableListOf()
+    private var deviceList: MutableList<DeviceData> = mutableListOf()
 
     private val receiver = object : BroadcastReceiver() {
         @SuppressLint("MissingPermission")
@@ -72,7 +71,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
                                 if (location != null) {
                                     Log.i(TAG, "Found device $device at location $location")
 
-                                    // TODO: Do not add if already scanned
                                     addDevice(device, LatLng(location.latitude, location.longitude))
                                     return@addOnCompleteListener
                                 }
@@ -115,14 +113,20 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         registerReceiver(receiver, IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED))
         registerReceiver(receiver, IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED))
 
-        arrayAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, devicesList)
+        arrayAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, deviceList)
         deviceListView.adapter = arrayAdapter
+        deviceListView.setOnItemClickListener { adapterView, _, i, _ ->
+            val deviceData = adapterView.getItemAtPosition(i) as DeviceData
+            deviceData.marker.showInfoWindow()
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(deviceData.latLng, DEFAULT_ZOOM))
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, DEFAULT_ZOOM))
+        map.setOnInfoWindowClickListener(this)
 
         enableMyLocation()
     }
@@ -142,7 +146,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
                 Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
             }
         } else if (requestCode == BLUETOOTH_PERMISSION_REQUEST_CODE) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.BLUETOOTH
+                ) == PackageManager.PERMISSION_GRANTED && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.BLUETOOTH_CONNECT
+                ) != PackageManager.PERMISSION_GRANTED)
             ) {
                 enableBluetooth()
             } else {
@@ -151,6 +161,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
+    }
+
+    override fun onInfoWindowClick(marker: Marker) {
+        deviceList.find { it.marker == marker }?.let { DeviceInfoDialogFragment(it).show(supportFragmentManager, "device_info") }
     }
 
     override fun onDestroy() {
@@ -184,6 +198,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.BLUETOOTH),
+                BLUETOOTH_PERMISSION_REQUEST_CODE
+            )
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.BLUETOOTH_CONNECT
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.BLUETOOTH_CONNECT),
                 BLUETOOTH_PERMISSION_REQUEST_CODE
             )
         } else {
@@ -220,21 +244,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     fun addDevice(bluetoothDevice: BluetoothDevice, location: LatLng) {
-        val devicesData = devices.getOrPut(location.hashCode()) {
+        var existingDeviceData = deviceList.find { deviceData -> deviceData.device.address == bluetoothDevice.address }
+        if (existingDeviceData == null) {
             val marker: Marker = map.addMarker(
                 MarkerOptions()
+                    .title(DeviceData.getDeviceName(bluetoothDevice))
                     .position(location)
             ) ?: throw Exception("Could not add marker")
 
-            DevicesData(marker, mutableListOf())
+            existingDeviceData = DeviceData(bluetoothDevice, marker, location)
+            deviceList += existingDeviceData
         }
 
-        devicesList += bluetoothDevice
         arrayAdapter.notifyDataSetChanged()
-
-        devicesData.devices += bluetoothDevice
-
-        devicesData.marker.title = devicesData.devices.joinToString("\n") { it.address}
-
     }
 }
