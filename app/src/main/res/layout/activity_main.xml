@@ -15,47 +15,66 @@
             app:layout_constraintEnd_toEndOf="parent">
 
         <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:animateLayoutChanges="true">
+            android:id="@+id/linearLayoutCompat"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical">
 
             <ListView
-                    android:id="@+id/listView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3"
-                    android:visibility="gone" />
+                android:id="@+id/listView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:visibility="gone" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:id="@+id/mapContainer"
-                    tools:context=".MapsFragment"
-                    android:name="com.google.android.gms.maps.SupportMapFragment">
+                android:id="@+id/mapContainer"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                tools:context=".MapsFragment">
 
                 <ToggleButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/toggleButton"
-                        app:layout_constraintStart_toStartOf="parent"
-                        android:layout_marginStart="8dp"
-                        android:textOn="@string/scan_on"
-                        android:textOff="@string/scan_off"
-                        android:enabled="false"
-                        android:onClick="toggleScanning"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:layout_marginTop="8dp"
-                        android:checked="false" />
+                    android:id="@+id/swapTheme"
+                    android:layout_width="120dp"
+                    android:layout_height="46dp"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@color/light_background"
+                    android:checked="false"
+                    android:enabled="false"
+                    android:textColor="@color/light_text"
+                    android:textOff="@string/swap_theme"
+                    android:textOn="@string/swap_theme"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <ToggleButton
+                    android:id="@+id/toggleButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/light_background"
+                    android:checked="false"
+                    android:enabled="false"
+                    android:onClick="toggleScanning"
+                    android:textColor="@color/light_text"
+                    android:textOff="@string/scan_off"
+                    android:textOn="@string/scan_on"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.fragment.app.FragmentContainerView xmlns:map="http://schemas.android.com/apk/res-auto"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:id="@+id/map"
-                        tools:context=".MapsFragment"
-                        android:name="com.google.android.gms.maps.SupportMapFragment"
-                        map:uiCompass="true" />
+                    android:id="@+id/map"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    map:uiCompass="true"
+                    tools:context=".MapsFragment" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -67,6 +86,8 @@
                 android:clickable="true"
                 android:id="@+id/floatingActionButton"
                 android:focusable="true"
+                android:background="@color/light_background"
+            android:backgroundTint="@color/light_background"
                 android:contentDescription="@string/fab_description"
                 android:src="@drawable/baseline_expand_more_24"
                 android:onClick="toggleDeviceList"

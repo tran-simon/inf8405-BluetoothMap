@@ -16,6 +16,7 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -27,6 +28,7 @@ import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -47,6 +49,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var bluetoothAdapter: BluetoothAdapter
     private lateinit var toggleButton: ToggleButton
+    private lateinit var swapButton: ToggleButton
     private lateinit var deviceListView: ListView
     lateinit var devicesListAdapter: DevicesListAdapter
 
@@ -95,10 +98,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        supportActionBar?.hide()
 
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         toggleButton = findViewById(R.id.toggleButton)
+        swapButton = findViewById(R.id.swapTheme)
+
         deviceListView = findViewById(R.id.listView)
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
@@ -121,15 +127,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
             deviceData.marker.showInfoWindow()
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(deviceData.latLng, DEFAULT_ZOOM))
         }
+
+        swapButton.setOnCheckedChangeListener { _, isChecked ->
+            swapTheme(isChecked)
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, DEFAULT_ZOOM))
         map.setOnInfoWindowClickListener(this)
-
         enableMyLocation()
+        swapButton.isEnabled = true
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -258,5 +267,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         }
 
         devicesListAdapter.notifyDataSetChanged()
+    }
+
+    private fun swapTheme(isChecked: Boolean) {
+        if(isChecked) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            if(::map.isInitialized) map.setMapStyle( MapStyleOptions.loadRawResourceStyle(
+                this, R.raw.dark_style) )
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            if(::map.isInitialized) map.setMapStyle( MapStyleOptions.loadRawResourceStyle(
+                this, R.raw.light_style) )
+        }
     }
 }

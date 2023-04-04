@@ -9,4 +9,5 @@
     <string name="btn_navigate">How to get there</string>
     <string name="btn_share">Share</string>
     <string name="device_is_starred">Device is starred?</string>
+    <string name="swap_theme">SWAP THEME</string>
 </resources>
