@@ -5,4 +5,8 @@
     <string name="scan_off">Scan?</string>
     <string name="fab_description">Toggle device list</string>
     <string name="btn_ok">OK</string>
+    <string name="btn_star_description">Toggle favorite</string>
+    <string name="btn_navigate">How to get there</string>
+    <string name="btn_share">Share</string>
+    <string name="device_is_starred">Device is starred?</string>
 </resources>

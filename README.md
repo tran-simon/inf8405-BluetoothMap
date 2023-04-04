@@ -19,14 +19,17 @@
 - [x] Device list
     - [x] Drawer
     - [x] FAB
+    - [x] Star
 - [x] Device details when the user clicks a pin or a list item
-- [ ] "Comment y arriver"
-- [ ] Favorites
-- [ ] Share
+- [x] "Comment y arriver"
+- [x] Favorites
+- [x] Share
 - [ ] Database to save data
 - [ ] Dark mode
     - [ ] Map
     - [ ] FAB
     - [ ] Action Bar
+- [ ] Translate (Put all strings in french)
+- [ ] Fix bug: Scan on launch sometimes not working
 - [ ] Report
 - [ ] APK Demo

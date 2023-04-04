@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     ActivityCompat.OnRequestPermissionsResultCallback,
     OnInfoWindowClickListener {
     companion object {
-        private const val TAG = "BluetoothMap_Log"
+        const val TAG = "BluetoothMap_Log"
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
         private const val BLUETOOTH_PERMISSION_REQUEST_CODE = 2
         private const val DEFAULT_ZOOM = 15f
@@ -48,10 +48,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     private lateinit var bluetoothAdapter: BluetoothAdapter
     private lateinit var toggleButton: ToggleButton
     private lateinit var deviceListView: ListView
-    private lateinit var arrayAdapter: ArrayAdapter<DeviceData>
+    lateinit var devicesListAdapter: DevicesListAdapter
 
     private var locationPermissionGranted = false
-    private var discovering = true
+    private var discovering = false
 
     private var deviceList: MutableList<DeviceData> = mutableListOf()
 
@@ -107,14 +107,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
 
         val bluetoothManager: BluetoothManager = getSystemService(BluetoothManager::class.java)
         bluetoothAdapter = bluetoothManager.adapter
-        enableBluetooth()
 
         registerReceiver(receiver, IntentFilter(BluetoothDevice.ACTION_FOUND))
         registerReceiver(receiver, IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED))
         registerReceiver(receiver, IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED))
 
-        arrayAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, deviceList)
-        deviceListView.adapter = arrayAdapter
+        enableBluetooth()
+
+        devicesListAdapter = DevicesListAdapter(this, deviceList)
+        deviceListView.adapter = devicesListAdapter
         deviceListView.setOnItemClickListener { adapterView, _, i, _ ->
             val deviceData = adapterView.getItemAtPosition(i) as DeviceData
             deviceData.marker.showInfoWindow()
@@ -256,6 +257,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
             deviceList += existingDeviceData
         }
 
-        arrayAdapter.notifyDataSetChanged()
+        devicesListAdapter.notifyDataSetChanged()
     }
 }

@@ -6,7 +6,7 @@ import android.os.Build
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 
-data class DeviceData(var device: BluetoothDevice, val marker: Marker, var latLng: LatLng) {
+data class DeviceData(var device: BluetoothDevice, val marker: Marker, var latLng: LatLng, var starred: Boolean = false) {
     companion object {
         @SuppressLint("MissingPermission")
         fun getDeviceName(bluetoothDevice: BluetoothDevice): String {
