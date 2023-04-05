@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.os.Build
@@ -40,6 +41,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     OnInfoWindowClickListener {
     companion object {
         const val TAG = "BluetoothMap_Log"
+        const val CURRENT_THEME = "CURRENT_THEME"
+        const val LIGHT_THEME = "LIGHT"
+        const val DARK_THEME = "DARK"
+        const val SHARED_PREFERENCES_NAME = "BluetoothMap"
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
         private const val BLUETOOTH_PERMISSION_REQUEST_CODE = 2
         private const val DEFAULT_ZOOM = 15f
@@ -48,6 +53,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
 
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var bluetoothAdapter: BluetoothAdapter
     private lateinit var toggleButton: ToggleButton
     private lateinit var swapButton: ToggleButton
@@ -97,6 +103,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        sharedPreferences = applicationContext.getSharedPreferences(
+            SHARED_PREFERENCES_NAME,
+            MODE_PRIVATE
+        )
+        if(isDarkMode()) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         supportActionBar?.hide()
@@ -140,6 +155,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         map.setOnInfoWindowClickListener(this)
         enableMyLocation()
         swapButton.isEnabled = true
+        setMapTheme()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -272,25 +288,35 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
 
     private fun swapTheme(isChecked: Boolean) {
         if(this@MainActivity::map.isInitialized) {
-            try {
-                val success: Boolean = if(isChecked) {
-                    setTheme(R.style.Theme_dark)
-                    map.setMapStyle(
-                        MapStyleOptions.loadRawResourceStyle(
-                            this, R.raw.dark_style
-                        )
-                    )
-                } else {
-                    setTheme(R.style.Theme_light)
-                    map.setMapStyle( MapStyleOptions.loadRawResourceStyle(
-                        this, R.raw.light_style) )
-                }
-                if (!success) {
-                    Log.e(TAG, "Style parsing failed.")
-                }
-            } catch (e: Resources.NotFoundException) {
-                Log.e(TAG, "Can't find style.", e)
+            val editor = sharedPreferences.edit()
+            if(isChecked) {
+                editor.putString(CURRENT_THEME, LIGHT_THEME);
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            } else {
+                editor.putString(CURRENT_THEME, DARK_THEME);
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             }
+            editor.apply()
         }
+    }
+
+    private fun setMapTheme() {
+        if(isDarkMode()){
+            map.setMapStyle(
+                MapStyleOptions.loadRawResourceStyle(
+                    this, R.raw.dark_style
+                )
+            )
+        } else {
+            map.setMapStyle(
+                MapStyleOptions.loadRawResourceStyle(
+                    this, R.raw.light_style
+                )
+            )
+        }
+    }
+
+    private fun isDarkMode(): Boolean {
+        return sharedPreferences.getString(CURRENT_THEME, "").equals(DARK_THEME)
     }
 }

@@ -1,58 +1,34 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.light" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
+    <style name="Theme.BluetoothMap" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/light_background</item>
-        <item name="colorPrimaryVariant">@color/light_background</item>
-        <item name="colorOnPrimary">@color/light_background</item>
-        <!-- Secondary brand color. -->
+        <item name="colorPrimaryContainer">#EADDFF</item>
+        <item name="colorOnPrimary">#FFFBFE</item>
+        <item name="colorOnPrimaryContainer">#21005E</item>
+
         <item name="colorSecondary">@color/light_background</item>
-        <item name="colorSecondaryVariant">@color/light_background</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" >@color/light_background</item>
+        <item name="colorSecondaryContainer">#4F378B</item>
+        <item name="colorOnSecondary">@color/dark_background</item>
+        <item name="colorOnSecondaryContainer">#EADDFF</item>
         <!-- Customize your theme here. -->
-        <item name="background">@color/light_background</item>
-        <item name="android:listViewStyle">@style/ListViewStyleDark</item>
-        <item name="android:buttonStyleToggle">@style/ToggleButtonStyleDark</item>
-
-    </style>
-
-    <style name="Theme.dark" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/dark_background</item>
-        <item name="colorPrimaryVariant">@color/dark_background</item>
-        <item name="colorOnPrimary">@color/dark_background</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/dark_background</item>
-        <item name="colorSecondaryVariant">@color/dark_background</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" >@color/dark_background</item>
-        <!-- Customize your theme here. -->
-        <item name="background">@color/dark_background</item>
-        <item name="android:listViewStyle">@style/ToggleButtonStyleDark</item>
-        <item name="android:buttonStyleToggle">@style/ListViewStyleDark</item>
-    </style>
-
-    <style name="ToggleButtonStyleLight" parent="android:Widget.DeviceDefault.Button.Toggle">
-        <item name="android:background">@color/dark_background</item>
-        <item name="android:textColor">@color/white</item>
-    </style>
-
-    <style name="ToggleButtonStyleDark" parent="android:Widget.DeviceDefault.Button.Toggle">
-        <item name="android:background">@color/light_background</item>
-        <item name="android:textColor">@color/white</item>
-    </style>
-
-    <style name="ListViewStyleLight" parent="android:Widget.DeviceDefault.ListView.DropDown">
-        <item name="android:background">@color/dark_background</item>
-        <item name="android:textColor">@color/white</item>
-    </style>
-
-    <style name="ListViewStyleDark" parent="android:Widget.DeviceDefault.ListView.DropDown">
-        <item name="background">@color/dark_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
         <item name="android:listViewStyle">@style/ListViewStyleLight</item>
         <item name="android:buttonStyleToggle">@style/ToggleButtonStyleLight</item>
     </style>
+
+    <style name="ToggleButtonStyleLight" parent="android:Widget.DeviceDefault.Button.Toggle">
+        <item name="android:background">@color/light_background</item>
+        <item name="android:textColor">@color/dark_background</item>
+    </style>
+
+
+    <style name="ListViewStyleLight" parent="android:Widget.DeviceDefault.ListView.DropDown">
+        <item name="android:background">@color/light_background</item>
+        <item name="android:color">@color/dark_background</item>
+    </style>
+
+
 </resources>

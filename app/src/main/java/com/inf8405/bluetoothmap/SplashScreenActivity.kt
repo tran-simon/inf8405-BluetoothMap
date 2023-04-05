@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 
 class StartScreenActivity : AppCompatActivity() {
 
@@ -15,13 +16,22 @@ class StartScreenActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
+        val sharedPreferences = applicationContext.getSharedPreferences(
+            MainActivity.SHARED_PREFERENCES_NAME,
+            MODE_PRIVATE
+        )
+
         supportActionBar?.hide()
         setContentView(R.layout.activity_splash_screen)
         super.onCreate(savedInstanceState)
 
-        // TODO: change container according to dark/light theme
         val container: ImageView = findViewById(R.id.container)
-        container.setImageResource(R.drawable.light_splash_screen)
+
+        if(sharedPreferences.getString(MainActivity.CURRENT_THEME, "").equals(MainActivity.DARK_THEME)) {
+            container.setImageResource(R.drawable.dark_splash_screen)
+        } else {
+            container.setImageResource(R.drawable.light_splash_screen)
+        }
     }
 
 
