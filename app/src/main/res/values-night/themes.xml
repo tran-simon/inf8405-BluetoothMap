@@ -1,14 +1,14 @@
 <resources>
     <!-- Base application theme. -->
     <style name="Theme.BluetoothMap" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/dark_background</item>
+        <item name="colorPrimary">@color/dark_color</item>
         <item name="colorPrimaryContainer">#EADDFF</item>
-        <item name="colorOnPrimary">#FFFBFE</item>
+        <item name="colorOnPrimary">@color/light_color</item>
         <item name="colorOnPrimaryContainer">#21005E</item>
 
-        <item name="colorSecondary">@color/dark_background</item>
-        <item name="colorSecondaryContainer">@color/dark_background</item>
-        <item name="colorOnSecondary">@color/light_background</item>
+        <item name="colorSecondary">@color/dark_color</item>
+        <item name="colorSecondaryContainer">@color/dark_color</item>
+        <item name="colorOnSecondary">@color/light_color</item>
         <item name="colorOnSecondaryContainer">#EADDFF</item>
 
         <!-- Customize your theme here. -->
@@ -16,18 +16,21 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
+        <item name="android:textColor">@color/light_color</item>
         <item name="android:listViewStyle">@style/ListViewStyleDark</item>
         <item name="android:buttonStyleToggle">@style/ToggleButtonStyleDark</item>
     </style>
 
     <style name="ToggleButtonStyleDark" parent="android:Widget.DeviceDefault.Button.Toggle">
-        <item name="android:background">@color/dark_background</item>
-        <item name="android:textColor">@color/light_background</item>
+        <item name="android:background">@color/dark_color</item>
+        <item name="android:textColor">@color/light_color</item>
     </style>
 
 
     <style name="ListViewStyleDark" parent="android:Widget.DeviceDefault.ListView.DropDown">
-        <item name="android:background">@color/dark_background</item>
-        <item name="android:color">@color/light_background</item>
+        <item name="android:background">@color/dark_color</item>
+        <item name="android:color">@color/light_color</item>
+        <item name="android:dividerHeight">1px</item>
+        <item name="android:divider">@color/light_color</item>
     </style>
 </resources>

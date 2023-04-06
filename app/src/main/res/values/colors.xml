@@ -9,9 +9,10 @@
     <color name="white">#FFFFFFFF</color>
 
     <!-- Theme colors -->
-    <color name="light_background">#9FC8FF</color>
+    <color name="light_color">#9FC8FF</color>
     <color name="light_text">#00214D</color>
-    <color name="dark_background">#00214D</color>
+    <color name="dark_color">#00214D</color>
     <color name="dark_text">#9FC8FF</color>
     <color name="info">#006DFF</color>
+    <color name="star">#FFEB3B</color>
 </resources>

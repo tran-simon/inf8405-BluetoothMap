@@ -1,6 +1,7 @@
 package com.inf8405.bluetoothmap
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.button.MaterialButton
 
 class DeviceInfoDialogFragment(private val device: DeviceData) : DialogFragment(), OnClickListener {
 
@@ -18,7 +20,8 @@ class DeviceInfoDialogFragment(private val device: DeviceData) : DialogFragment(
     private lateinit var dialogView: View
     private lateinit var dialogTitle: TextView
     private lateinit var dialogText: TextView
-    private lateinit var btnStar: ImageButton
+    private lateinit var btnStar: MaterialButton
+    private lateinit var btnShare: MaterialButton
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         activity = requireActivity() as MainActivity
@@ -29,14 +32,14 @@ class DeviceInfoDialogFragment(private val device: DeviceData) : DialogFragment(
 
         btnStar = dialogView.findViewById(R.id.btn_toggleStar)
         val btnNavigate = dialogView.findViewById<Button>(R.id.btn_navigate)
-        val btnShare = dialogView.findViewById<ImageButton>(R.id.btn_share)
+        btnShare = dialogView.findViewById(R.id.btn_share)
 
         btnStar.setOnClickListener(this)
         btnNavigate.setOnClickListener(this)
         btnShare.setOnClickListener(this)
 
         if (device.starred) {
-            btnStar.setImageResource(R.drawable.baseline_star_24)
+            btnStar.setIconResource(R.drawable.baseline_star_24)
         }
 
         dialogTitle.text = device.toString()
@@ -44,7 +47,6 @@ class DeviceInfoDialogFragment(private val device: DeviceData) : DialogFragment(
 
         val builder = AlertDialog.Builder(activity)
         builder.setView(dialogView)
-        builder.setPositiveButton(R.string.btn_ok, null)
         return builder.create()
     }
 
@@ -64,7 +66,7 @@ class DeviceInfoDialogFragment(private val device: DeviceData) : DialogFragment(
 
     private fun star() {
         device.starred = !device.starred
-        btnStar.setImageResource(if (device.starred) R.drawable.baseline_star_24 else R.drawable.baseline_star_outline_24)
+        btnStar.setIconResource(if (device.starred) R.drawable.baseline_star_24 else R.drawable.baseline_star_outline_24)
         activity.devicesListAdapter.notifyDataSetChanged()
     }
 

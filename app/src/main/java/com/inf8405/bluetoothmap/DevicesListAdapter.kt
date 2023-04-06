@@ -35,7 +35,7 @@ class DevicesListAdapter(private val context: Context, private val items: Mutabl
         textView.setCompoundDrawablesWithIntrinsicBounds(
             null,
             null,
-            if (item.starred) AppCompatResources.getDrawable(context, R.drawable.baseline_star_24) else null,
+            if (item.starred) AppCompatResources.getDrawable(context, R.drawable.baseline_star_yellow_24) else null,
             null
         )
 
