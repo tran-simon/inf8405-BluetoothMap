@@ -4,6 +4,7 @@
 
 [DEMO](BluetoothMap-INF8405.apk)
 
+[Lab report](INF8405_TP2_1933097_1955204_2169358_1961278.pdf.pdf)
 
 ## By
 
@@ -34,5 +35,5 @@
     - [x] Action Bar
 - [ ] Translate (Put all strings in french)
 - [ ] Fix bug: Scan on launch sometimes not working
-- [ ] Report
+- [x] Report
 - [x] APK Demo
