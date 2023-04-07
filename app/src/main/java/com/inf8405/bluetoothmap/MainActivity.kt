@@ -5,15 +5,11 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.content.SharedPreferences
+import android.content.*
 import android.content.pm.PackageManager
-import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
+import android.os.ParcelUuid
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -34,6 +30,8 @@ import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback,
@@ -64,6 +62,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     private var discovering = false
 
     private var deviceList: MutableList<DeviceData> = mutableListOf()
+    private var markers: HashMap<String, Marker> = hashMapOf()
+    private val db = Firebase.firestore.collection("devices")
 
     private val receiver = object : BroadcastReceiver() {
         @SuppressLint("MissingPermission")
@@ -107,10 +107,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
             SHARED_PREFERENCES_NAME,
             MODE_PRIVATE
         )
-        if(isDarkMode()) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        if (isDarkMode()) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -140,7 +140,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         deviceListView.adapter = devicesListAdapter
         deviceListView.setOnItemClickListener { adapterView, _, i, _ ->
             val deviceData = adapterView.getItemAtPosition(i) as DeviceData
-            deviceData.marker.showInfoWindow()
+            markers[deviceData.address]?.showInfoWindow()
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(deviceData.latLng, DEFAULT_ZOOM))
         }
 
@@ -156,6 +156,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         enableMyLocation()
         swapButton.isEnabled = true
         setMapTheme()
+        initialiseDevices()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -191,7 +192,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     override fun onInfoWindowClick(marker: Marker) {
-        deviceList.find { it.marker == marker }?.let { DeviceInfoDialogFragment(it).show(supportFragmentManager, "device_info") }
+        deviceList.find { markers[it.address] == marker }?.let { DeviceInfoDialogFragment(it, db.document(it.address)).show(supportFragmentManager, "device_info") }
     }
 
     override fun onDestroy() {
@@ -270,38 +271,78 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         fab.setImageResource(if (deviceListView.visibility == View.VISIBLE) R.drawable.baseline_expand_less_24 else R.drawable.baseline_expand_more_24)
     }
 
+    private fun initialiseDevices() {
+        db.get()
+            .addOnSuccessListener { result ->
+                for (device in result) {
+                    val latLng = LatLng(
+                        device["latLng.latitude"] as Double,
+                        device["latLng.longitude"] as Double,
+                    )
+
+                    val deviceData = DeviceData(
+                        latLng,
+                        device["alias"] as String?,
+                        device["address"] as String,
+                        device["name"] as String?,
+                        (device["type"] as Long).toInt(),
+                        device["uuids"] as Array<ParcelUuid>?,
+                        (device["bondState"] as Long).toInt(),
+                        device["bluetoothClass"] as String?,
+                        device["starred"] as Boolean
+                    )
+
+                    val marker = map.addMarker(
+                        MarkerOptions()
+                            .title(deviceData.name ?: deviceData.address)
+                            .position(deviceData.latLng)
+                    ) ?: throw Exception("Could not add marker")
+
+                    markers[deviceData.address] = marker
+                    deviceList += deviceData
+                }
+
+                devicesListAdapter.notifyDataSetChanged()
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error getting documents.", exception)
+            }
+    }
+
     fun addDevice(bluetoothDevice: BluetoothDevice, location: LatLng) {
-        var existingDeviceData = deviceList.find { deviceData -> deviceData.device.address == bluetoothDevice.address }
+        var existingDeviceData = deviceList.find { deviceData -> deviceData.address == bluetoothDevice.address }
         if (existingDeviceData == null) {
             val marker: Marker = map.addMarker(
                 MarkerOptions()
-                    .title(DeviceData.getDeviceName(bluetoothDevice))
+                    .title(bluetoothDevice.getDeviceName())
                     .position(location)
             ) ?: throw Exception("Could not add marker")
 
-            existingDeviceData = DeviceData(bluetoothDevice, marker, location)
+            existingDeviceData = DeviceData(bluetoothDevice, location)
+            markers[existingDeviceData.address] = marker
             deviceList += existingDeviceData
+            db.document(existingDeviceData.address).set(existingDeviceData)
         }
 
         devicesListAdapter.notifyDataSetChanged()
     }
 
     private fun swapTheme(isChecked: Boolean) {
-        if(this@MainActivity::map.isInitialized) {
+        if (this@MainActivity::map.isInitialized) {
             val editor = sharedPreferences.edit()
-            if(isChecked) {
-                editor.putString(CURRENT_THEME, LIGHT_THEME);
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            if (isChecked) {
+                editor.putString(CURRENT_THEME, LIGHT_THEME)
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             } else {
-                editor.putString(CURRENT_THEME, DARK_THEME);
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                editor.putString(CURRENT_THEME, DARK_THEME)
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             }
             editor.apply()
         }
     }
 
     private fun setMapTheme() {
-        if(isDarkMode()){
+        if (isDarkMode()) {
             map.setMapStyle(
                 MapStyleOptions.loadRawResourceStyle(
                     this, R.raw.dark_style

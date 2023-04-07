@@ -3,38 +3,41 @@ package com.inf8405.bluetoothmap
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import android.os.Build
+import android.os.ParcelUuid
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
 
-data class DeviceData(var device: BluetoothDevice, val marker: Marker, var latLng: LatLng, var starred: Boolean = false) {
-    companion object {
-        @SuppressLint("MissingPermission")
-        fun getDeviceName(bluetoothDevice: BluetoothDevice): String {
-            return bluetoothDevice.name ?: bluetoothDevice.toString()
-        }
-    }
-
-    override fun toString(): String {
-        return getDeviceName(device)
-    }
+data class DeviceData(
+    var latLng: LatLng,
+    var alias: String?,
+    var address: String,
+    var name: String?,
+    var type: Int,
+    var uuids: Array<ParcelUuid>?,
+    var bondState: Int,
+    var bluetoothClass: String?,
+    var starred: Boolean = false,
+) {
 
     @SuppressLint("MissingPermission")
-    fun getDeviceInfo(): String {
-        val alias = when {
+    constructor(bluetoothDevice: BluetoothDevice, latLng: LatLng) : this(
+        latLng,
+        when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
-                device.alias
+                bluetoothDevice.alias
             }
             else -> {
                 null
             }
-        }
-        val address = device.address
-        val name = device.name
-        val type = device.type
-        val uuids = device.uuids
-        val bondState = device.bondState
-        val bluetoothClass = device.bluetoothClass
+        },
+        bluetoothDevice.address,
+        bluetoothDevice.name,
+        bluetoothDevice.type,
+        bluetoothDevice.uuids,
+        bluetoothDevice.bondState,
+        bluetoothDevice.bluetoothClass?.toString(),
+    )
 
+    fun getDeviceInfo(): String {
         return """
                 Alias: $alias
                 Address: $address
@@ -45,4 +48,46 @@ data class DeviceData(var device: BluetoothDevice, val marker: Marker, var latLn
                 Bluetooth class: $bluetoothClass
             """.trimIndent()
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as DeviceData
+
+        if (latLng != other.latLng) return false
+        if (alias != other.alias) return false
+        if (address != other.address) return false
+        if (name != other.name) return false
+        if (type != other.type) return false
+        if (!uuids.contentEquals(other.uuids)) return false
+        if (bondState != other.bondState) return false
+        if (bluetoothClass != other.bluetoothClass) return false
+        if (starred != other.starred) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = latLng.hashCode()
+        result = 31 * result + (alias?.hashCode() ?: 0)
+        result = 31 * result + address.hashCode()
+        result = 31 * result + name.hashCode()
+        result = 31 * result + type
+        result = 31 * result + uuids.contentHashCode()
+        result = 31 * result + bondState
+        result = 31 * result + bluetoothClass.hashCode()
+        result = 31 * result + starred.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return this.name ?: this.address
+    }
+}
+
+@SuppressLint("MissingPermission")
+fun BluetoothDevice.getDeviceName(): String {
+    this.toString()
+    return this.name ?: this.address
 }
