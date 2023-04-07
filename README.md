@@ -2,6 +2,9 @@
 
 [Guidelines](INF8405%20-%20TP2%20-%20H2023.pdf)
 
+[DEMO](BluetoothMap-INF8405.apk)
+
+
 ## By
 
 - 1961278 - Simon Tran
@@ -24,12 +27,12 @@
 - [x] "Comment y arriver"
 - [x] Favorites
 - [x] Share
-- [ ] Database to save data
-- [ ] Dark mode
-    - [ ] Map
-    - [ ] FAB
-    - [ ] Action Bar
+- [x] Database to save data
+- [x] Dark mode
+    - [x] Map
+    - [x] FAB
+    - [x] Action Bar
 - [ ] Translate (Put all strings in french)
 - [ ] Fix bug: Scan on launch sometimes not working
 - [ ] Report
-- [ ] APK Demo
+- [x] APK Demo
