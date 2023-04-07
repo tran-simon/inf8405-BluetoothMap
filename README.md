@@ -4,15 +4,15 @@
 
 [DEMO](BluetoothMap-INF8405.apk)
 
-[Lab report](INF8405_TP2_1933097_1955204_2169358_1961278.pdf)
+[Lab report](INF8405_TP2_2169358_1961278_1955204_1933097%0A.pdf)
 
 ## By
 
-- 1961278 - Simon Tran
-- 1933097 - Pritam Patel
-- 1955204 - Batikan Iscan
 - 2169358 - Imad Berrahil
-
+- 1961278 - Simon Tran
+- 1955204 - Batikan Iscan
+- 1933097 - Pritam Patel
+ 
 # TODO
 
 - [x] Splash Screen
