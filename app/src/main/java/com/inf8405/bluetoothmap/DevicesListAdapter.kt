@@ -19,7 +19,7 @@ class DevicesListAdapter(private val context: Context, private val items: Mutabl
     }
 
     override fun getItemId(position: Int): Long {
-        return items[position].device.address.hashCode().toLong()
+        return items[position].address.hashCode().toLong()
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {

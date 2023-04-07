@@ -13,8 +13,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.button.MaterialButton
+import com.google.firebase.firestore.DocumentReference
 
-class DeviceInfoDialogFragment(private val device: DeviceData) : DialogFragment(), OnClickListener {
+class DeviceInfoDialogFragment(private val device: DeviceData, private val document: DocumentReference) : DialogFragment(), OnClickListener {
 
     private lateinit var activity: MainActivity
     private lateinit var dialogView: View
@@ -67,6 +68,9 @@ class DeviceInfoDialogFragment(private val device: DeviceData) : DialogFragment(
     private fun star() {
         device.starred = !device.starred
         btnStar.setIconResource(if (device.starred) R.drawable.baseline_star_24 else R.drawable.baseline_star_outline_24)
+        document.update(hashMapOf<String, Any>(
+            "starred" to device.starred
+        ))
         activity.devicesListAdapter.notifyDataSetChanged()
     }
 
