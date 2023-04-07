@@ -4,7 +4,7 @@
 
 [DEMO](BluetoothMap-INF8405.apk)
 
-[Lab report](INF8405_TP2_1933097_1955204_2169358_1961278.pdf.pdf)
+[Lab report](INF8405_TP2_1933097_1955204_2169358_1961278.pdf)
 
 ## By
 
