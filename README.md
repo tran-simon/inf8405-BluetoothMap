@@ -37,3 +37,15 @@
 - [ ] Fix bug: Scan on launch sometimes not working
 - [x] Report
 - [x] APK Demo
+
+# TODO - Project
+
+- [ ] Account creation
+  - [ ] profile picture
+- [ ] 2 sensors
+- [ ] Store all data on Firebase
+- [ ] Battery info (evolution during app usage)
+  - [ ] Battery usage for scanning
+- [ ] Information on network (uplink / downlink)
+- [ ] Airplane mode
+- [ ] Locale switch

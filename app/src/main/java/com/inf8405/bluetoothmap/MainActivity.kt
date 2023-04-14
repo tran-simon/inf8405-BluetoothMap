@@ -357,4 +357,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     private fun isDarkMode(): Boolean {
         return sharedPreferences.getString(CURRENT_THEME, "").equals(DARK_THEME)
     }
+
+    fun showSensors(view: View) {
+        SensorsDialogFragment().show(supportFragmentManager, "sensors")
+    }
 }

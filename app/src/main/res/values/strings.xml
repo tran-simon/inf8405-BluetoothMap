@@ -10,4 +10,6 @@
     <string name="btn_share">Share</string>
     <string name="device_is_starred">Device is starred?</string>
     <string name="swap_theme">SWAP THEME</string>
+    <string name="btn_sensors">Show sensors</string>
+    <string name="txt_accelerometer">Accelerometer</string>
 </resources>
