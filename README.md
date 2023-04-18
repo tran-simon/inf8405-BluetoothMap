@@ -43,6 +43,8 @@
 - [ ] Account creation
   - [ ] profile picture
 - [ ] 2 sensors
+  - [x] Accelerometer
+  - [ ] Other sensor (wait for answers in discord)
 - [ ] Store all data on Firebase
 - [ ] Battery info (evolution during app usage)
   - [ ] Battery usage for scanning

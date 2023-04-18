@@ -12,4 +12,8 @@
     <string name="swap_theme">SWAP THEME</string>
     <string name="btn_sensors">Show sensors</string>
     <string name="txt_accelerometer">Accelerometer</string>
+    <string name="label_accelerometer_x">X</string>
+    <string name="label_accelerometer_y">Y</string>
+    <string name="label_accelerometer_z">Z</string>
+    <string name="txt_accelerometer_value" translatable="false">%1$f m/s<sup>2</sup></string>
 </resources>
