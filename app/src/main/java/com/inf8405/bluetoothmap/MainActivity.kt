@@ -27,6 +27,9 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -53,14 +56,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     private lateinit var toggleButton: ToggleButton
     private lateinit var swapButton: ToggleButton
     private lateinit var deviceListView: ListView
+    private lateinit var userImagebutton: ImageButton
+    private lateinit var usernameTextView: TextView
     lateinit var devicesListAdapter: DevicesListAdapter
+
+    lateinit var auth: FirebaseAuth
 
     private var locationPermissionGranted = false
     private var discovering = false
 
     private var deviceList: MutableList<DeviceData> = mutableListOf()
     private var markers: HashMap<String, Marker> = hashMapOf()
-    private val db = Firebase.firestore.collection("devices")
+    private val devicesCollection = Firebase.firestore.collection("devices")
+    val usersCollection = Firebase.firestore.collection("users")
+
+    var currentUser: FirebaseUser? = null
+    var userData: UserData = UserData()
 
     private val receiver = object : BroadcastReceiver() {
         @SuppressLint("MissingPermission")
@@ -119,6 +130,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         swapButton = findViewById(R.id.swapTheme)
 
         deviceListView = findViewById(R.id.listView)
+        userImagebutton = findViewById(R.id.btn_userPicture)
+        usernameTextView = findViewById(R.id.txt_username)
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -143,6 +156,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
 
         swapButton.setOnCheckedChangeListener { _, isChecked ->
             swapTheme(isChecked)
+        }
+
+        auth = Firebase.auth
+
+        auth.addAuthStateListener { auth ->
+            currentUser = auth.currentUser
+            retrieveUserData()
+        }
+
+        userImagebutton.setOnClickListener {
+            if (currentUser == null) {
+                CreateUserDialogFragment().show(supportFragmentManager, "create_user")
+            } else {
+                UserInfoDialogFragment(currentUser!!).show(supportFragmentManager, "user_info")
+            }
         }
     }
 
@@ -189,7 +217,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     override fun onInfoWindowClick(marker: Marker) {
-        deviceList.find { markers[it.address] == marker }?.let { DeviceInfoDialogFragment(it, db.document(it.address)).show(supportFragmentManager, "device_info") }
+        deviceList.find { markers[it.address] == marker }
+            ?.let { DeviceInfoDialogFragment(it, devicesCollection.document(it.address)).show(supportFragmentManager, "device_info") }
     }
 
     override fun onDestroy() {
@@ -269,7 +298,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     private fun initialiseDevices() {
-        db.get()
+        devicesCollection.get()
             .addOnSuccessListener { result ->
                 for (device in result) {
                     val latLng = LatLng(
@@ -318,7 +347,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
             existingDeviceData = DeviceData(bluetoothDevice, location)
             markers[existingDeviceData.address] = marker
             deviceList += existingDeviceData
-            db.document(existingDeviceData.address).set(existingDeviceData)
+            devicesCollection.document(existingDeviceData.address).set(existingDeviceData)
         }
 
         devicesListAdapter.notifyDataSetChanged()
@@ -360,5 +389,46 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
 
     fun showSensors(view: View) {
         SensorsDialogFragment().show(supportFragmentManager, "sensors")
+    }
+
+    fun signup() {
+        auth.signInAnonymously()
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    currentUser = auth.currentUser
+                    if (currentUser != null) {
+                        Log.d(TAG, "signInAnonymously:success $currentUser")
+                        UserInfoDialogFragment(currentUser!!).show(supportFragmentManager, "user_info")
+                    } else {
+                        Log.e(TAG, "signInAnonymously:success but currentUser is null")
+                    }
+                } else {
+                    Log.e(TAG, "signInAnonymously:failure", task.exception)
+                    Toast.makeText(
+                        baseContext, "Authentication failed.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+    }
+
+    fun retrieveUserData() {
+        if (currentUser == null) {
+            userData = UserData()
+            updateUserData()
+        } else {
+            usersCollection.document(currentUser!!.uid).get().addOnSuccessListener { document ->
+                val userDataDocument = document.toObject(UserData::class.java)
+                if (userDataDocument != null) {
+                    userData = userDataDocument
+                    updateUserData()
+                }
+            }
+        }
+    }
+
+    private fun updateUserData() {
+        usernameTextView.text = userData.username
+        // TODO: Update profile picture
     }
 }

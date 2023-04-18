@@ -4,7 +4,7 @@
 
 [DEMO](BluetoothMap-INF8405.apk)
 
-[Lab report](INF8405_TP2_2169358_1961278_1955204_1933097%0A.pdf)
+[Lab report](INF8405_TP2_2169358_1961278_1955204_1933097.pdf)
 
 ## By
 
@@ -41,11 +41,13 @@
 # TODO - Project
 
 - [ ] Account creation
+  - [x] username
   - [ ] profile picture
 - [ ] 2 sensors
   - [x] Accelerometer
   - [ ] Other sensor (wait for answers in discord)
 - [ ] Store all data on Firebase
+  - [ ] Support multiple users, only show devices for current user
 - [ ] Battery info (evolution during app usage)
   - [ ] Battery usage for scanning
 - [ ] Information on network (uplink / downlink)

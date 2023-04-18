@@ -16,4 +16,15 @@
     <string name="label_accelerometer_y">Y</string>
     <string name="label_accelerometer_z">Z</string>
     <string name="txt_accelerometer_value" translatable="false">%1$f m/s<sup>2</sup></string>
+    <string name="img_userPicture_description">User profile picture</string>
+    <string name="create_user_dialog_title">You are not currently logged in</string>
+    <string name="create_user_dialog_message">Do you wish to create a new account?</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_yes">Yes</string>
+    <string name="btn_user_pic_hint">Press to upload a new image</string>
+    <string name="txt_username_label">Username</string>
+    <string name="btn_save_changes">Save changes</string>
+    <string name="btn_user_delete">Delete account data and logout</string>
+    <string name="signout_dialog_title">Are you sure?</string>
+    <string name="signout_dialog_message">All your data will be lost</string>
 </resources>
