@@ -52,6 +52,6 @@
     - [ ] Battery usage for scanning
 - [x] Information on network (uplink / downlink)
 - [ ] Airplane mode
-- [ ] Locale switch
+- [x] Locale switch
 - [ ] Test on device with sdk 24
 - [ ] Enable splashscreen

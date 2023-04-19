@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.os.LocaleListCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -35,6 +36,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import java.util.*
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback,
@@ -143,6 +145,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         usernameTextView = findViewById(R.id.txt_username)
         bandwidthRxTextView = findViewById(R.id.txt_bandwidth_rx)
         bandwidthTxTextView = findViewById(R.id.txt_bandwidth_tx)
+        val swapLocaleButton = findViewById<ToggleButton>(R.id.swapLocale)
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -190,6 +193,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
             bandwidthRxTextView.text = getString(R.string.bandwidth_rx, rx)
             bandwidthTxTextView.text = getString(R.string.bandwidth_tx, tx)
         }
+
+        swapLocaleButton.setOnCheckedChangeListener { _, isChecked -> swapLocale(isChecked) }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -386,6 +391,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         }
 
         devicesListAdapter.notifyDataSetChanged()
+    }
+
+    private fun swapLocale(isChecked: Boolean) {
+        val locale = if (isChecked) Locale("fr", "CA") else Locale("en", "CA")
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.create(locale))
     }
 
     private fun swapTheme(isChecked: Boolean) {

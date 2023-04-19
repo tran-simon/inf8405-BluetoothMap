@@ -6,16 +6,16 @@
     <string name="fab_description">Toggle device list</string>
     <string name="btn_ok">OK</string>
     <string name="btn_star_description">Toggle favorite</string>
-    <string name="btn_navigate">How to get there</string>
+    <string name="btn_navigate">How to get there?</string>
     <string name="btn_share">Share</string>
     <string name="device_is_starred">Device is starred?</string>
     <string name="swap_theme">SWAP THEME</string>
     <string name="btn_sensors">Show sensors</string>
     <string name="txt_accelerometer">Accelerometer</string>
-    <string name="label_accelerometer_x">X</string>
-    <string name="label_accelerometer_y">Y</string>
-    <string name="label_accelerometer_z">Z</string>
-    <string name="txt_accelerometer_value" translatable="false">%1$f m/s<sup>2</sup></string>
+    <string name="label_accelerometer_x" translatable="false">X</string>
+    <string name="label_accelerometer_y" translatable="false">Y</string>
+    <string name="label_accelerometer_z" translatable="false">Z</string>
+    <string name="txt_accelerometer_value" translatable="false">%1$f m/s^2</string>
     <string name="img_userPicture_description">User profile picture</string>
     <string name="create_user_dialog_title">You are not currently logged in</string>
     <string name="create_user_dialog_message">Do you wish to create a new account?</string>
@@ -27,6 +27,8 @@
     <string name="btn_user_delete">Delete account data and logout</string>
     <string name="signout_dialog_title">Are you sure?</string>
     <string name="signout_dialog_message">All your data will be lost</string>
-    <string name="bandwidth_rx">Receiving: %s</string>
-    <string name="bandwidth_tx">Sending: %s</string>
+    <string name="bandwidth_rx" translatable="false">Downlink: %s</string>
+    <string name="bandwidth_tx" translatable="false">Uplink: %s</string>
+    <string name="swap_locale_fr">Switch to French</string>
+    <string name="swap_locale_en">Switch to English</string>
 </resources>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">inf8405-BluetoothMap</string>
+    <string name="splash_screen_image">Image de démarrage</string>
+    <string name="swap_theme">CHANGER LE THÈME</string>
+    <string name="scan_on">En découverte…</string>
+    <string name="scan_off">Découvrir?</string>
+    <string name="fab_description">Afficher la liste des appareils</string>
+    <string name="btn_ok">OK</string>
+    <string name="btn_star_description">Basculer l\'étoile</string>
+    <string name="btn_navigate">Comment y arriver?</string>
+    <string name="btn_share">Partager</string>
+    <string name="device_is_starred">Appareil est favorit?</string>
+    <string name="btn_sensors">Afficher les capteurs</string>
+    <string name="txt_accelerometer">Accéléromètre</string>
+    <string name="img_userPicture_description">Photo de profil de l\'utilisateur</string>
+    <string name="create_user_dialog_title">Vous n\'êtes pas connecté</string>
+    <string name="create_user_dialog_message">Voulez-vous créer un nouveau compte?</string>
+    <string name="btn_cancel">Annuler</string>
+    <string name="btn_yes">Oui</string>
+    <string name="btn_user_pic_hint">Appuyer pour prendre une nouvelle photo de profil</string>
+    <string name="txt_username_label">Nom d\'utilisateur</string>
+    <string name="btn_save_changes">Sauvegarder les changements</string>
+    <string name="btn_user_delete">Supprimer les données et se déconnecter</string>
+    <string name="signout_dialog_title">Êtes-vous certain?</string>
+    <string name="signout_dialog_message">Toutes vos données seront perdues</string>
+    <string name="swap_locale_fr">Mettre en Français</string>
+    <string name="swap_locale_en">Mettre en Anglais</string>
+</resources>
