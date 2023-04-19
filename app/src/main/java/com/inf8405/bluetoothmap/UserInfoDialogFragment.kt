@@ -1,34 +1,83 @@
 package com.inf8405.bluetoothmap
 
+import android.app.Activity.RESULT_OK
 import android.app.Dialog
+import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import androidx.appcompat.app.AlertDialog
+import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseUser
+import java.io.ByteArrayOutputStream
 
+
+const val REQUEST_IMAGE_CAPTURE = 1
 
 class UserInfoDialogFragment(private val currentUser: FirebaseUser) : DialogFragment() {
     private lateinit var activity: MainActivity
+    private lateinit var imageUploadButton: ImageButton
     private lateinit var usernameTextInput: TextInputEditText
     private lateinit var saveButton: Button
     private lateinit var deleteUserButton: Button
+
+    private var hasTakenPicture = false
+    private fun dispatchTakePictureIntent() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        @Suppress("DEPRECATION")
+        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+    }
+
+    @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            val bitmap = data?.extras?.get("data") as Bitmap
+            imageUploadButton.setImageBitmap(bitmap)
+            hasTakenPicture = true
+        }
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         activity = requireActivity() as MainActivity
         val dialogView = View.inflate(activity, R.layout.fragment_user_info, null)
 
+        imageUploadButton = dialogView.findViewById(R.id.btn_image_upload)
+        if (activity.hasProfilePicture) {
+            imageUploadButton.setImageDrawable(activity.userImagebutton.drawable)
+        }
+
+        imageUploadButton.setOnClickListener {
+            dispatchTakePictureIntent()
+        }
+
         usernameTextInput = dialogView.findViewById(R.id.txt_username_input)
-        usernameTextInput.setText(activity.userData.username)
+        usernameTextInput.setText(activity.usernameTextView.text.toString())
 
         saveButton = dialogView.findViewById(R.id.btn_save)
         saveButton.setOnClickListener {
             val username = usernameTextInput.text.toString()
-            // TODO: picture
-            activity.usersCollection.document(currentUser.uid).set(UserData(username)).continueWith {
-                activity.retrieveUserData()
+            activity.usersCollection.document(currentUser.uid).set(
+                hashMapOf(
+                    "username" to username
+                )
+            ).continueWith {
+                activity.updateUsername()
+            }
+
+            if (hasTakenPicture) {
+                val outputStream = ByteArrayOutputStream()
+                imageUploadButton.drawable.toBitmap().compress(Bitmap.CompressFormat.PNG, 90, outputStream)
+                val byteArray = outputStream.toByteArray()
+
+                activity.storageRef.child("images/${currentUser.uid}").putBytes(byteArray).continueWith {
+                    activity.updateProfileImage()
+                }
             }
         }
 
@@ -59,7 +108,7 @@ class CreateUserDialogFragment : DialogFragment() {
     }
 }
 
-class SignoutDialogFragment: DialogFragment() {
+class SignoutDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val activity = requireActivity() as MainActivity
         val builder = AlertDialog.Builder(activity)

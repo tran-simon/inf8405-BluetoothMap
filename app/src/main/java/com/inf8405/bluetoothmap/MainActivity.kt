@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.content.*
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.os.ParcelUuid
@@ -15,6 +16,7 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -32,6 +34,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback,
@@ -56,8 +59,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     private lateinit var toggleButton: ToggleButton
     private lateinit var swapButton: ToggleButton
     private lateinit var deviceListView: ListView
-    private lateinit var userImagebutton: ImageButton
-    private lateinit var usernameTextView: TextView
+    lateinit var userImagebutton: ImageButton
+    var hasProfilePicture = false
+    lateinit var usernameTextView: TextView
     lateinit var devicesListAdapter: DevicesListAdapter
 
     lateinit var auth: FirebaseAuth
@@ -70,8 +74,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     private val devicesCollection = Firebase.firestore.collection("devices")
     val usersCollection = Firebase.firestore.collection("users")
 
-    var currentUser: FirebaseUser? = null
-    var userData: UserData = UserData()
+    private var currentUser: FirebaseUser? = null
+
+    val storageRef = Firebase.storage.reference
 
     private val receiver = object : BroadcastReceiver() {
         @SuppressLint("MissingPermission")
@@ -162,7 +167,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
 
         auth.addAuthStateListener { auth ->
             currentUser = auth.currentUser
-            retrieveUserData()
+            updateUsername()
+            updateProfileImage()
         }
 
         userImagebutton.setOnClickListener {
@@ -306,7 +312,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
                         device["latLng.longitude"] as Double,
                     )
 
-                    val deviceData = DeviceData(
+                    @Suppress("UNCHECKED_CAST") val deviceData = DeviceData(
                         latLng,
                         device["alias"] as String?,
                         device["address"] as String,
@@ -387,7 +393,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         return sharedPreferences.getString(CURRENT_THEME, "").equals(DARK_THEME)
     }
 
-    fun showSensors(view: View) {
+    fun showSensors(@Suppress("UNUSED_PARAMETER") view: View) {
         SensorsDialogFragment().show(supportFragmentManager, "sensors")
     }
 
@@ -412,23 +418,28 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
             }
     }
 
-    fun retrieveUserData() {
+    fun updateUsername() {
         if (currentUser == null) {
-            userData = UserData()
-            updateUserData()
+            usernameTextView.text = null
         } else {
             usersCollection.document(currentUser!!.uid).get().addOnSuccessListener { document ->
-                val userDataDocument = document.toObject(UserData::class.java)
-                if (userDataDocument != null) {
-                    userData = userDataDocument
-                    updateUserData()
-                }
+                document["username"]?.let { usernameTextView.text = it as String }
             }
         }
     }
 
-    private fun updateUserData() {
-        usernameTextView.text = userData.username
-        // TODO: Update profile picture
+    fun updateProfileImage() {
+        if (currentUser == null) {
+            if (hasProfilePicture) {
+                userImagebutton.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.baseline_person_24))
+            }
+            hasProfilePicture = false
+        } else {
+            hasProfilePicture = true
+            storageRef.child("images/${currentUser!!.uid}").getBytes(1024 * 1024 * 50).addOnSuccessListener { bytes ->
+                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                userImagebutton.setImageBitmap(bitmap)
+            }
+        }
     }
 }

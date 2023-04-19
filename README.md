@@ -42,7 +42,7 @@
 
 - [ ] Account creation
   - [x] username
-  - [ ] profile picture
+  - [x] profile picture
 - [ ] 2 sensors
   - [x] Accelerometer
   - [ ] Other sensor (wait for answers in discord)
@@ -53,3 +53,4 @@
 - [ ] Information on network (uplink / downlink)
 - [ ] Airplane mode
 - [ ] Locale switch
+- [ ] Test on device with sdk 24

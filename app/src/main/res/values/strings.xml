@@ -21,7 +21,7 @@
     <string name="create_user_dialog_message">Do you wish to create a new account?</string>
     <string name="btn_cancel">Cancel</string>
     <string name="btn_yes">Yes</string>
-    <string name="btn_user_pic_hint">Press to upload a new image</string>
+    <string name="btn_user_pic_hint">Press to take a new picture</string>
     <string name="txt_username_label">Username</string>
     <string name="btn_save_changes">Save changes</string>
     <string name="btn_user_delete">Delete account data and logout</string>

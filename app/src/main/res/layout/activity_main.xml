@@ -87,6 +87,7 @@
                             android:layout_width="75dp"
                             android:layout_height="75dp"
                             app:srcCompat="@drawable/baseline_person_24"
+                            android:scaleType="fitCenter"
                             android:id="@+id/btn_userPicture"
                             android:contentDescription="@string/img_userPicture_description" />
 
