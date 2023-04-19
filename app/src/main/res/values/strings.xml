@@ -27,4 +27,6 @@
     <string name="btn_user_delete">Delete account data and logout</string>
     <string name="signout_dialog_title">Are you sure?</string>
     <string name="signout_dialog_message">All your data will be lost</string>
+    <string name="bandwidth_rx">Receiving: %s</string>
+    <string name="bandwidth_tx">Sending: %s</string>
 </resources>

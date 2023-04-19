@@ -40,17 +40,18 @@
 
 # TODO - Project
 
-- [ ] Account creation
-  - [x] username
-  - [x] profile picture
+- [x] Account creation
+    - [x] username
+    - [x] profile picture
 - [ ] 2 sensors
-  - [x] Accelerometer
-  - [ ] Other sensor (wait for answers in discord)
-- [ ] Store all data on Firebase
-  - [x] Support multiple users, only show devices for current user
+    - [x] Accelerometer
+    - [ ] Other sensor (wait for answers in discord)
+- [x] Store all data on Firebase
+    - [x] Support multiple users, only show devices for current user
 - [ ] Battery info (evolution during app usage)
-  - [ ] Battery usage for scanning
-- [ ] Information on network (uplink / downlink)
+    - [ ] Battery usage for scanning
+- [x] Information on network (uplink / downlink)
 - [ ] Airplane mode
 - [ ] Locale switch
 - [ ] Test on device with sdk 24
+- [ ] Enable splashscreen

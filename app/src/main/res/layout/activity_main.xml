@@ -15,26 +15,26 @@
             app:layout_constraintEnd_toEndOf="parent">
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/linearLayoutCompat"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:animateLayoutChanges="true"
-            android:orientation="vertical">
+                android:id="@+id/linearLayoutCompat"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:animateLayoutChanges="true"
+                android:orientation="vertical">
 
             <ListView
-                android:id="@+id/listView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="3"
-                android:visibility="gone" />
+                    android:id="@+id/listView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:visibility="gone" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/mapContainer"
-                android:name="com.google.android.gms.maps.SupportMapFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                tools:context=".MapsFragment">
+                    android:id="@+id/mapContainer"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    tools:context=".MapsFragment">
 
                 <androidx.fragment.app.FragmentContainerView xmlns:map="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/map"
@@ -45,33 +45,54 @@
                         tools:context=".MapsFragment" />
 
                 <ToggleButton
-                    android:id="@+id/swapTheme"
-                    android:layout_width="120dp"
-                    android:layout_height="48dp"
-                    android:layout_gravity="bottom|end"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="16dp"
+                        android:id="@+id/swapTheme"
+                        android:layout_width="120dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="bottom|end"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="16dp"
 
-                    android:checked="false"
-                    android:enabled="false"
-                    android:textOff="@string/swap_theme"
-                    android:textOn="@string/swap_theme"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                        android:checked="false"
+                        android:enabled="false"
+                        android:textOff="@string/swap_theme"
+                        android:textOn="@string/swap_theme"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                <LinearLayout
+                        app:layout_constraintBottom_toTopOf="@+id/btn_sensors"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/txt_bandwidth_rx" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/txt_bandwidth_tx" />
+                </LinearLayout>
+
 
                 <ToggleButton
-                    android:id="@+id/toggleButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:checked="false"
-                    android:enabled="false"
-                    android:onClick="toggleScanning"
-                    android:textOff="@string/scan_off"
-                    android:textOn="@string/scan_on"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                        android:id="@+id/toggleButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:checked="false"
+                        android:enabled="false"
+                        android:onClick="toggleScanning"
+                        android:textOff="@string/scan_off"
+                        android:textOn="@string/scan_on"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                 <LinearLayout
                         android:orientation="vertical"
@@ -108,8 +129,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         android:layout_marginBottom="16dp"
                         android:text="@string/btn_sensors"
-                        android:onClick="showSensors"
-                        />
+                        android:onClick="showSensors" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

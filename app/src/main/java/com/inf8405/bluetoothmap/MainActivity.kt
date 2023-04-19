@@ -59,6 +59,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     private lateinit var toggleButton: ToggleButton
     private lateinit var swapButton: ToggleButton
     private lateinit var deviceListView: ListView
+    private lateinit var bandwidthRxTextView: TextView
+    private lateinit var bandwidthTxTextView: TextView
     lateinit var userImagebutton: ImageButton
     var hasProfilePicture = false
     lateinit var usernameTextView: TextView
@@ -77,6 +79,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     private var currentUser: FirebaseUser? = null
 
     val storageRef = Firebase.storage.reference
+
+    private val bandwidthHandler = BandwidthHandler()
 
     private val receiver = object : BroadcastReceiver() {
         @SuppressLint("MissingPermission")
@@ -137,6 +141,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         deviceListView = findViewById(R.id.listView)
         userImagebutton = findViewById(R.id.btn_userPicture)
         usernameTextView = findViewById(R.id.txt_username)
+        bandwidthRxTextView = findViewById(R.id.txt_bandwidth_rx)
+        bandwidthTxTextView = findViewById(R.id.txt_bandwidth_tx)
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -178,6 +184,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
             } else {
                 UserInfoDialogFragment(currentUser!!).show(supportFragmentManager, "user_info")
             }
+        }
+
+        bandwidthHandler.startUpdating { rx, tx ->
+            bandwidthRxTextView.text = getString(R.string.bandwidth_rx, rx)
+            bandwidthTxTextView.text = getString(R.string.bandwidth_tx, tx)
         }
     }
 
