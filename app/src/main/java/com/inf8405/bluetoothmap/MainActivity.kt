@@ -169,6 +169,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
             currentUser = auth.currentUser
             updateUsername()
             updateProfileImage()
+            initialiseDevices()
         }
 
         userImagebutton.setOnClickListener {
@@ -304,7 +305,20 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     private fun initialiseDevices() {
-        devicesCollection.get()
+        if (currentUser == null) {
+            // Reset markers and devices
+            if (this@MainActivity::map.isInitialized) {
+                map.clear()
+            }
+            markers.clear()
+            deviceList.clear()
+            devicesListAdapter.notifyDataSetChanged()
+            return
+        }
+
+        devicesCollection
+            .whereEqualTo("user", currentUser!!.uid)
+            .get()
             .addOnSuccessListener { result ->
                 for (device in result) {
                     val latLng = LatLng(
@@ -314,6 +328,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
 
                     @Suppress("UNCHECKED_CAST") val deviceData = DeviceData(
                         latLng,
+                        device["user"] as String,
                         device["alias"] as String?,
                         device["address"] as String,
                         device["name"] as String?,
@@ -350,10 +365,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
                     .position(location)
             ) ?: throw Exception("Could not add marker")
 
-            existingDeviceData = DeviceData(bluetoothDevice, location)
+            existingDeviceData = DeviceData(bluetoothDevice, location, currentUser?.uid)
             markers[existingDeviceData.address] = marker
             deviceList += existingDeviceData
-            devicesCollection.document(existingDeviceData.address).set(existingDeviceData)
+
+            if (existingDeviceData.user != null) {
+                devicesCollection.document(existingDeviceData.address).set(existingDeviceData)
+            }
         }
 
         devicesListAdapter.notifyDataSetChanged()

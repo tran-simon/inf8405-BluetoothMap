@@ -47,7 +47,7 @@
   - [x] Accelerometer
   - [ ] Other sensor (wait for answers in discord)
 - [ ] Store all data on Firebase
-  - [ ] Support multiple users, only show devices for current user
+  - [x] Support multiple users, only show devices for current user
 - [ ] Battery info (evolution during app usage)
   - [ ] Battery usage for scanning
 - [ ] Information on network (uplink / downlink)
