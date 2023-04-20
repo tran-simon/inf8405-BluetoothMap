@@ -19,8 +19,12 @@ class SensorsDialogFragment : DialogFragment(), SensorEventListener {
     private lateinit var txtAccelerometerX: TextInputEditText
     private lateinit var txtAccelerometerY: TextInputEditText
     private lateinit var txtAccelerometerZ: TextInputEditText
+    private lateinit var txtGyroscopeX: TextInputEditText
+    private lateinit var txtGyroscopeY: TextInputEditText
+    private lateinit var txtGyroscopeZ: TextInputEditText
     private lateinit var sensorManager: SensorManager
     private var accelerometer: Sensor? = null
+    private var gyroscope: Sensor? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         activity = requireActivity() as MainActivity
@@ -30,8 +34,13 @@ class SensorsDialogFragment : DialogFragment(), SensorEventListener {
         txtAccelerometerY = dialogView.findViewById(R.id.txt_accelerometer_y)
         txtAccelerometerZ = dialogView.findViewById(R.id.txt_accelerometer_z)
 
+        txtGyroscopeX = dialogView.findViewById(R.id.txt_gyroscope_x)
+        txtGyroscopeY = dialogView.findViewById(R.id.txt_gyroscope_y)
+        txtGyroscopeZ = dialogView.findViewById(R.id.txt_gyroscope_z)
+
         sensorManager = activity.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
 
         val builder = AlertDialog.Builder(activity)
         builder.setView(dialogView)
@@ -41,6 +50,7 @@ class SensorsDialogFragment : DialogFragment(), SensorEventListener {
     override fun onResume() {
         super.onResume()
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+        sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL)
     }
 
     override fun onPause() {
@@ -49,14 +59,25 @@ class SensorsDialogFragment : DialogFragment(), SensorEventListener {
     }
 
     override fun onSensorChanged(sensorEvent: SensorEvent?) {
-        if(sensorEvent?.sensor?.type == Sensor.TYPE_ACCELEROMETER){
-            val x = sensorEvent.values[0]
-            val y = sensorEvent.values[1]
-            val z = sensorEvent.values[2]
+        if (sensorEvent == null) {
+            return
+        }
 
-            txtAccelerometerX.setText(getString(R.string.txt_accelerometer_value, x))
-            txtAccelerometerY.setText(getString(R.string.txt_accelerometer_value, y))
-            txtAccelerometerZ.setText(getString(R.string.txt_accelerometer_value, z))
+        val x = sensorEvent.values[0]
+        val y = sensorEvent.values[1]
+        val z = sensorEvent.values[2]
+
+        when (sensorEvent.sensor?.type) {
+            Sensor.TYPE_ACCELEROMETER -> {
+                txtAccelerometerX.setText(getString(R.string.txt_accelerometer_value, x))
+                txtAccelerometerY.setText(getString(R.string.txt_accelerometer_value, y))
+                txtAccelerometerZ.setText(getString(R.string.txt_accelerometer_value, z))
+            }
+            Sensor.TYPE_GYROSCOPE -> {
+                txtGyroscopeX.setText(getString(R.string.txt_gyroscope_value, x))
+                txtGyroscopeY.setText(getString(R.string.txt_gyroscope_value, y))
+                txtGyroscopeZ.setText(getString(R.string.txt_gyroscope_value, z))
+            }
         }
     }
 

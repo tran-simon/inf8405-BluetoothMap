@@ -26,4 +26,5 @@
     <string name="signout_dialog_message">Toutes vos données seront perdues</string>
     <string name="swap_locale_fr">Mettre en Français</string>
     <string name="swap_locale_en">Mettre en Anglais</string>
+    <string name="txt_gyroscope">Gyroscope</string>
 </resources>

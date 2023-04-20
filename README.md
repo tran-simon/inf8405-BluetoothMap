@@ -43,9 +43,9 @@
 - [x] Account creation
     - [x] username
     - [x] profile picture
-- [ ] 2 sensors
+- [x] 2 sensors
     - [x] Accelerometer
-    - [ ] Other sensor (wait for answers in discord)
+    - [x] Other sensor (wait for answers in discord)
 - [x] Store all data on Firebase
     - [x] Support multiple users, only show devices for current user
 - [ ] Battery info (evolution during app usage)
