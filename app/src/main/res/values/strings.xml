@@ -33,4 +33,9 @@
     <string name="bandwidth_tx" translatable="false">Uplink: %s</string>
     <string name="swap_locale_fr">Switch to French</string>
     <string name="swap_locale_en">Switch to English</string>
+    <string name="msg_bluetooth_lost">Lost Bluetooth, pausing scan…</string>
+    <string name="msg_bluetooth_restored">Bluetooth reactivated, resuming scan…</string>
+    <string name="msg_permission_denied">Permission denied</string>
+    <string name="msg_permission_denied_bluetooth">Bluetooth permission denied</string>
+    <string name="msg_auth_fail">Authentication failed.</string>
 </resources>

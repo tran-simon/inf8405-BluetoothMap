@@ -27,4 +27,9 @@
     <string name="swap_locale_fr">Mettre en Français</string>
     <string name="swap_locale_en">Mettre en Anglais</string>
     <string name="txt_gyroscope">Gyroscope</string>
+    <string name="msg_bluetooth_lost">Bluetooth déactivé, découverte mise sur pause…</string>
+    <string name="msg_bluetooth_restored">Bluetooth réactivé, en découverte…</string>
+    <string name="msg_permission_denied">Permission refusée</string>
+    <string name="msg_permission_denied_bluetooth">Permission Bluetooth refusée</string>
+    <string name="msg_auth_fail">L\'authentification a échouée</string>
 </resources>

@@ -51,7 +51,7 @@
 - [ ] Battery info (evolution during app usage)
     - [ ] Battery usage for scanning
 - [x] Information on network (uplink / downlink)
-- [ ] Airplane mode
+- [x] Airplane mode
 - [x] Locale switch
 - [ ] Test on device with sdk 24
-- [ ] Enable splashscreen
+- [x] Enable splashscreen

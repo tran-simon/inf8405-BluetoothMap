@@ -8,6 +8,8 @@ import android.bluetooth.BluetoothManager
 import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
 import android.os.ParcelUuid
@@ -84,6 +86,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
 
     private val bandwidthHandler = BandwidthHandler()
 
+    private var shouldRestartDiscovery = false
+
     private val receiver = object : BroadcastReceiver() {
         @SuppressLint("MissingPermission")
         override fun onReceive(context: Context, intent: Intent) {
@@ -116,6 +120,32 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
                 }
                 BluetoothAdapter.ACTION_DISCOVERY_STARTED -> {
                     Log.i(TAG, "Bluetooth discovery started")
+                }
+                BluetoothAdapter.ACTION_STATE_CHANGED -> {
+                    when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1)) {
+                        BluetoothAdapter.STATE_OFF -> {
+                            if (discovering) {
+                                Toast.makeText(this@MainActivity, getString(R.string.msg_bluetooth_lost), Toast.LENGTH_SHORT).show()
+                                shouldRestartDiscovery = true
+                                bluetoothAdapter.cancelDiscovery()
+                                toggleButton.isChecked = false
+                                toggleButton.isEnabled = false
+                                @Suppress("DEPRECATION")
+                                toggleButton.background.setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY)
+                            }
+                        }
+                        BluetoothAdapter.STATE_ON -> {
+                            if (shouldRestartDiscovery) {
+                                Toast.makeText(this@MainActivity, getString(R.string.msg_bluetooth_restored), Toast.LENGTH_SHORT).show()
+                                shouldRestartDiscovery = false
+                                bluetoothAdapter.startDiscovery()
+                                toggleButton.isEnabled = true
+                                toggleButton.isChecked = true
+                                toggleButton.background.colorFilter = null
+                            }
+                        }
+                    }
+
                 }
             }
         }
@@ -157,6 +187,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         registerReceiver(receiver, IntentFilter(BluetoothDevice.ACTION_FOUND))
         registerReceiver(receiver, IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED))
         registerReceiver(receiver, IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED))
+        registerReceiver(receiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
 
         enableBluetooth()
 
@@ -219,7 +250,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
             ) {
                 enableMyLocation()
             } else {
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.msg_permission_denied), Toast.LENGTH_SHORT).show()
             }
         } else if (requestCode == BLUETOOTH_PERMISSION_REQUEST_CODE) {
             if (ActivityCompat.checkSelfPermission(
@@ -232,7 +263,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
             ) {
                 enableBluetooth()
             } else {
-                Toast.makeText(this, "Bluetooth permission denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.msg_permission_denied_bluetooth), Toast.LENGTH_SHORT).show()
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -450,7 +481,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
                 } else {
                     Log.e(TAG, "signInAnonymously:failure", task.exception)
                     Toast.makeText(
-                        baseContext, "Authentication failed.",
+                        baseContext, getString(R.string.msg_auth_fail),
                         Toast.LENGTH_SHORT
                     ).show()
                 }

@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 class StartScreenActivity : AppCompatActivity() {
 
     companion object {
-        const val SPLASH_SCREEN_TIME: Long = 0 // TODO: Revert
+        const val SPLASH_SCREEN_TIME: Long = 3000
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
