@@ -7,7 +7,10 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.content.*
 import android.content.pm.PackageManager
+import android.content.Context
 import android.graphics.BitmapFactory
+import android.hardware.SensorManager
+import android.os.BatteryManager
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Build
@@ -152,10 +155,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        setupBatteryAnalytics()
+
         sharedPreferences = applicationContext.getSharedPreferences(
             SHARED_PREFERENCES_NAME,
             MODE_PRIVATE
         )
+
         if (isDarkMode()) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {
@@ -226,6 +233,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         }
 
         swapLocaleButton.setOnCheckedChangeListener { _, isChecked -> swapLocale(isChecked) }
+
+
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -338,9 +347,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     fun toggleScanning(view: View) {
         discovering = if ((view as ToggleButton).isChecked) {
             bluetoothAdapter.startDiscovery()
+            AnalyticsHandler.instance.initialScanBatteryLevel = AnalyticsHandler.instance.getBatteryPct()
+            AnalyticsHandler.instance.initialScanEnergyLevel = AnalyticsHandler.instance.getChargeCounter()
             true
         } else {
             bluetoothAdapter.cancelDiscovery()
+            AnalyticsHandler.instance.previousScanBatteryLevel = AnalyticsHandler.instance.getScanBatteryLevel()
+            AnalyticsHandler.instance.previousScanEnergyLevel = AnalyticsHandler.instance.getScanEnergyLevel()
             false
         }
     }
@@ -511,5 +524,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
                 userImagebutton.setImageBitmap(bitmap)
             }
         }
+    }
+
+    private fun setupBatteryAnalytics() {
+        // Setup BatteryManager and Intent
+        AnalyticsHandler.instance.mBatteryManager = applicationContext.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
+        AnalyticsHandler.instance.batteryStatus = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { intentFilter ->
+            applicationContext.registerReceiver(null, intentFilter)
+        }
+        // Setup initial values
+        AnalyticsHandler.instance.initialAppBatteryLevel = AnalyticsHandler.instance.getBatteryPct()
+        AnalyticsHandler.instance.initialAppEnergyLevel = AnalyticsHandler.instance.getChargeCounter()
     }
 }

@@ -10,7 +10,7 @@
     <string name="btn_share">Share</string>
     <string name="device_is_starred">Device is starred?</string>
     <string name="swap_theme">SWAP THEME</string>
-    <string name="btn_sensors">Show sensors</string>
+    <string name="btn_sensors">Show analytics</string>
     <string name="txt_accelerometer">Accelerometer</string>
     <string name="txt_gyroscope">Gyroscope</string>
     <string name="label_sensor_x" translatable="false">X</string>
@@ -33,6 +33,12 @@
     <string name="bandwidth_tx" translatable="false">Uplink: %s</string>
     <string name="swap_locale_fr">Switch to French</string>
     <string name="swap_locale_en">Switch to English</string>
+    <string name="txt_battery_app">Application battery usage</string>
+    <string name="txt_battery_scan">Bluetooth scan battery usage</string>
+    <string name="txt_battery_usage_hint">Battery percentage</string>
+    <string name="txt_energy_usage_hint">Capacity</string>
+    <string name="txt_battery_value" translatable="false">%1$L</string>
+
     <string name="msg_bluetooth_lost">Lost Bluetooth, pausing scan…</string>
     <string name="msg_bluetooth_restored">Bluetooth reactivated, resuming scan…</string>
     <string name="msg_permission_denied">Permission denied</string>
