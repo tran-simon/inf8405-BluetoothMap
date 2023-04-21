@@ -48,8 +48,8 @@
     - [x] Other sensor (wait for answers in discord)
 - [x] Store all data on Firebase
     - [x] Support multiple users, only show devices for current user
-- [ ] Battery info (evolution during app usage)
-    - [ ] Battery usage for scanning
+- [x] Battery info (evolution during app usage)
+    - [x] Battery usage for scanning
 - [x] Information on network (uplink / downlink)
 - [x] Airplane mode
 - [x] Locale switch

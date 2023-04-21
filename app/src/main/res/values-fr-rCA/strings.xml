@@ -32,4 +32,8 @@
     <string name="msg_permission_denied">Permission refusée</string>
     <string name="msg_permission_denied_bluetooth">Permission Bluetooth refusée</string>
     <string name="msg_auth_fail">L\'authentification a échouée</string>
+    <string name="txt_battery_app">Usage de la batterie par l\'application</string>
+    <string name="txt_battery_scan">Usage de la batterie par le scan bluetooth</string>
+    <string name="txt_battery_usage_hint">% de batterie</string>
+    <string name="txt_energy_usage_hint">Capacité</string>
 </resources>

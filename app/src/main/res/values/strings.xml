@@ -38,7 +38,6 @@
     <string name="txt_battery_usage_hint">Battery percentage</string>
     <string name="txt_energy_usage_hint">Capacity</string>
     <string name="txt_battery_value" translatable="false">%1$L</string>
-
     <string name="msg_bluetooth_lost">Lost Bluetooth, pausing scan…</string>
     <string name="msg_bluetooth_restored">Bluetooth reactivated, resuming scan…</string>
     <string name="msg_permission_denied">Permission denied</string>
