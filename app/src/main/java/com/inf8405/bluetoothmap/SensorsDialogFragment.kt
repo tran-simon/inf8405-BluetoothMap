@@ -12,13 +12,16 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.ToggleButton
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.textfield.TextInputEditText
+import android.view.View.OnClickListener
 
 
-class SensorsDialogFragment : DialogFragment(), SensorEventListener {
+class SensorsDialogFragment : DialogFragment(), SensorEventListener, OnClickListener {
     private lateinit var activity: MainActivity
     private lateinit var dialogView: View
     private lateinit var txtAccelerometerX: TextInputEditText
@@ -33,6 +36,7 @@ class SensorsDialogFragment : DialogFragment(), SensorEventListener {
     private lateinit var txtScanBatteryUsage: TextInputEditText
     private lateinit var txtScanEnergyUsage: TextInputEditText
     private lateinit var scanToggleButton: ToggleButton
+    private lateinit var resetBatteryButton: Button
 
 
     private var accelerometer: Sensor? = null
@@ -54,6 +58,7 @@ class SensorsDialogFragment : DialogFragment(), SensorEventListener {
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
 
+        resetBatteryButton = dialogView.findViewById(R.id.reset_battery_stats)
         scanToggleButton = activity.findViewById(R.id.toggleButton)
 
         txtAppBatteryUsage = dialogView.findViewById(R.id.txt_app_battery_usage)
@@ -62,6 +67,8 @@ class SensorsDialogFragment : DialogFragment(), SensorEventListener {
         txtScanEnergyUsage = dialogView.findViewById(R.id.txt_scan_energy_usage)
         setAppBatteryUsage()
         setScanBatteryUsage()
+
+        resetBatteryButton.setOnClickListener(this)
 
         val builder = AlertDialog.Builder(activity)
         builder.setView(dialogView)
@@ -129,4 +136,22 @@ class SensorsDialogFragment : DialogFragment(), SensorEventListener {
         txtScanBatteryUsage.setText(instance.getScanBatteryLevel().toString()+ " %")
         txtScanEnergyUsage.setText(instance.getScanEnergyLevel().toString() + " mAh")
     }
+
+    override fun onClick(view: View?) {
+        when (view?.id) {
+            R.id.reset_battery_stats -> {
+                resetBatteryUsage()
+            }
+        }
+    }
+    @SuppressLint("SetTextI18n")
+    private fun resetBatteryUsage() {
+        val instance: AnalyticsHandler = AnalyticsHandler().getInstance()
+        instance.resetAnalytics()
+        txtAppBatteryUsage.setText("0 %")
+        txtAppEnergyUsage.setText("0 mAh")
+        txtScanBatteryUsage.setText("0 %")
+        txtScanEnergyUsage.setText("0 mAh")
+    }
+
 }

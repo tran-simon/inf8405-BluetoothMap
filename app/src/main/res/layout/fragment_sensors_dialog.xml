@@ -191,6 +191,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:baselineAligned="false"
+        android:layout_marginBottom="14dp"
         >
 
         <com.google.android.material.textfield.TextInputLayout
@@ -224,6 +225,20 @@
                 android:focusableInTouchMode="false"
                 />
         </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+        <Button
+            android:id="@+id/reset_battery_stats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reset_battery_values"
+            android:gravity="center"
+            android:padding="6dp" />
 
     </LinearLayout>
 </LinearLayout>

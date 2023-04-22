@@ -1,10 +1,13 @@
 package com.inf8405.bluetoothmap
 
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.BatteryManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.ViewModelProvider.NewInstanceFactory.Companion.instance
 import java.util.*
 
 
@@ -59,23 +62,43 @@ class AnalyticsHandler {
     }
 
     fun setAppBatteryLevels() {
-        appBatteryLevel = initialAppBatteryLevel - getBatteryPct()
-        appEnergyLevel =
-            (initialAppEnergyLevel - getChargeCounter()) / 1000
-
+        val batteryLevel = initialAppBatteryLevel - getBatteryPct()
+        if(batteryLevel > 0)
+            appBatteryLevel = batteryLevel
+        val energyLevel = (initialAppEnergyLevel - getChargeCounter()) / 1000
+        if(energyLevel > 0)
+            appEnergyLevel = energyLevel
     }
 
     fun setScanBatteryLevels() {
-        scanBatteryLevel = previousScanBatteryLevel + initialScanBatteryLevel - getBatteryPct()
-        scanEnergyLevel =
-            previousScanEnergyLevel + (initialScanEnergyLevel - getChargeCounter()) / 1000
+        val batteryLevel = previousScanBatteryLevel + initialScanBatteryLevel - getBatteryPct()
+        if(batteryLevel > 0)
+            scanBatteryLevel = batteryLevel
+        val energyLevel =  previousScanEnergyLevel + (initialScanEnergyLevel - getChargeCounter()) / 1000
+        if(energyLevel > 0)
+            scanEnergyLevel = energyLevel
     }
 
-    fun saveAppBatteryLevels(sharedPreferences: SharedPreferences) {
-        val editor = sharedPreferences.edit()
+    fun saveAppBatteryLevels() {
+        val editor =  MainActivity.sharedPreferences.edit()
         editor.putInt(MainActivity.APP_BATTERY_PERCENTAGE, initialAppBatteryLevel)
         editor.putLong(MainActivity.APP_BATTERY_CHARGE, initialAppEnergyLevel)
         editor.apply()
+    }
+
+    fun resetAnalytics() {
+        val editor = MainActivity.sharedPreferences.edit()
+        editor.putInt(MainActivity.APP_BATTERY_PERCENTAGE, 0)
+        editor.putLong(MainActivity.APP_BATTERY_CHARGE, 0)
+        editor.apply()
+
+        val initialBatteryLevel = getBatteryPct()
+        val initialEnergyLevel = getChargeCounter()
+
+        initialAppBatteryLevel = initialBatteryLevel
+        initialScanBatteryLevel = initialBatteryLevel
+        initialAppEnergyLevel = initialEnergyLevel
+        initialScanEnergyLevel = initialEnergyLevel
     }
 }
 

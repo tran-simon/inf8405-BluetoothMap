@@ -36,4 +36,5 @@
     <string name="txt_battery_scan">Usage de la batterie par le scan bluetooth</string>
     <string name="txt_battery_usage_hint">Pourcentage de batterie</string>
     <string name="txt_energy_usage_hint">Capacité</string>
+    <string name="reset_battery_values">Réinitialiser l\'utilisation de la batterie</string>
 </resources>

@@ -57,11 +57,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         private const val BLUETOOTH_PERMISSION_REQUEST_CODE = 2
         private const val DEFAULT_ZOOM = 15f
         private val DEFAULT_LOCATION = LatLng(45.50520841701728, -73.6131208357828)
+        lateinit var sharedPreferences: SharedPreferences
     }
 
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var bluetoothAdapter: BluetoothAdapter
     private lateinit var toggleButton: ToggleButton
     private lateinit var swapButton: ToggleButton
@@ -437,13 +437,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     private fun swapLocale(isChecked: Boolean) {
-        AnalyticsHandler.instance.saveAppBatteryLevels(sharedPreferences)
+        AnalyticsHandler.instance.saveAppBatteryLevels()
         val locale = if (isChecked) Locale("fr", "CA") else Locale("en", "CA")
         AppCompatDelegate.setApplicationLocales(LocaleListCompat.create(locale))
     }
 
     private fun swapTheme(isChecked: Boolean) {
-        AnalyticsHandler.instance.saveAppBatteryLevels(sharedPreferences)
+        AnalyticsHandler.instance.saveAppBatteryLevels()
         if (this@MainActivity::map.isInitialized) {
             val editor = sharedPreferences.edit()
             if (!isChecked) {
