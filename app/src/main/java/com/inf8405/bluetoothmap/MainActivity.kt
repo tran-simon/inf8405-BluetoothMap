@@ -443,7 +443,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     private fun swapTheme(isChecked: Boolean) {
         if (this@MainActivity::map.isInitialized) {
             val editor = sharedPreferences.edit()
-            if (isChecked) {
+            if (!isChecked) {
                 editor.putString(CURRENT_THEME, LIGHT_THEME)
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             } else {
