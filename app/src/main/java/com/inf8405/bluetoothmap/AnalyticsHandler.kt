@@ -2,7 +2,9 @@ package com.inf8405.bluetoothmap
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.BatteryManager
+import androidx.appcompat.app.AppCompatDelegate
 import java.util.*
 
 
@@ -49,7 +51,6 @@ class AnalyticsHandler {
     }
 
     fun getBatteryPct(): Int {
-
        return mBatteryManager?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) ?: 0
     }
 
@@ -68,6 +69,13 @@ class AnalyticsHandler {
         scanBatteryLevel = previousScanBatteryLevel + initialScanBatteryLevel - getBatteryPct()
         scanEnergyLevel =
             previousScanEnergyLevel + (initialScanEnergyLevel - getChargeCounter()) / 1000
+    }
+
+    fun saveAppBatteryLevels(sharedPreferences: SharedPreferences) {
+        val editor = sharedPreferences.edit()
+        editor.putInt(MainActivity.APP_BATTERY_PERCENTAGE, initialAppBatteryLevel)
+        editor.putLong(MainActivity.APP_BATTERY_CHARGE, initialAppEnergyLevel)
+        editor.apply()
     }
 }
 

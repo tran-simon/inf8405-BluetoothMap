@@ -53,6 +53,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         const val LIGHT_THEME = "LIGHT"
         const val DARK_THEME = "DARK"
         const val SHARED_PREFERENCES_NAME = "BluetoothMap"
+        const val APP_BATTERY_PERCENTAGE = "BATTERY_PCT"
+        const val APP_BATTERY_CHARGE = "BATTERY_CHG"
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
         private const val BLUETOOTH_PERMISSION_REQUEST_CODE = 2
         private const val DEFAULT_ZOOM = 15f
@@ -155,20 +157,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        setupBatteryAnalytics()
+        super.onCreate(savedInstanceState)
 
         sharedPreferences = applicationContext.getSharedPreferences(
             SHARED_PREFERENCES_NAME,
             MODE_PRIVATE
         )
 
+        setupBatteryAnalytics()
+
         if (isDarkMode()) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
-        super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
         supportActionBar?.hide()
 
@@ -436,11 +439,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     private fun swapLocale(isChecked: Boolean) {
+        AnalyticsHandler.instance.saveAppBatteryLevels(sharedPreferences)
         val locale = if (isChecked) Locale("fr", "CA") else Locale("en", "CA")
         AppCompatDelegate.setApplicationLocales(LocaleListCompat.create(locale))
     }
 
     private fun swapTheme(isChecked: Boolean) {
+        AnalyticsHandler.instance.saveAppBatteryLevels(sharedPreferences)
         if (this@MainActivity::map.isInitialized) {
             val editor = sharedPreferences.edit()
             if (!isChecked) {
@@ -530,8 +535,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         AnalyticsHandler.instance.batteryStatus = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { intentFilter ->
             applicationContext.registerReceiver(null, intentFilter)
         }
-        // Setup initial values
-        AnalyticsHandler.instance.initialAppBatteryLevel = AnalyticsHandler.instance.getBatteryPct()
-        AnalyticsHandler.instance.initialAppEnergyLevel = AnalyticsHandler.instance.getChargeCounter()
+        // Setup initial values -> Changing of theme and language recreates app therefore we use sharedPreference to retrieve battery data
+        if(sharedPreferences.getInt(APP_BATTERY_PERCENTAGE, 0) != 0) {
+            AnalyticsHandler.instance.initialAppBatteryLevel = sharedPreferences.getInt(APP_BATTERY_PERCENTAGE, 0)
+            AnalyticsHandler.instance.initialAppEnergyLevel = sharedPreferences.getLong(
+                APP_BATTERY_CHARGE, 0)
+        } else {
+            AnalyticsHandler.instance.initialAppBatteryLevel = AnalyticsHandler.instance.getBatteryPct()
+            AnalyticsHandler.instance.initialAppEnergyLevel = AnalyticsHandler.instance.getChargeCounter()
+        }
     }
 }
