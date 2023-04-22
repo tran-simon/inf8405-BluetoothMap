@@ -7,12 +7,10 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.content.*
 import android.content.pm.PackageManager
-import android.content.Context
 import android.graphics.BitmapFactory
-import android.hardware.SensorManager
-import android.os.BatteryManager
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
 import android.os.ParcelUuid

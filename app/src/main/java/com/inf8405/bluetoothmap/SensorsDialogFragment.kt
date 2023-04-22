@@ -14,12 +14,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ToggleButton
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat.registerReceiver
 import androidx.fragment.app.DialogFragment
-
 import com.google.android.material.textfield.TextInputEditText
-import java.util.ArrayList;
-import java.util.Date;
 
 
 class SensorsDialogFragment : DialogFragment(), SensorEventListener {
