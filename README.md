@@ -2,7 +2,7 @@
 
 [Guidelines](INF8405%20-%20TP2%20-%20H2023.pdf)
 
-[DEMO](BluetoothMap-INF8405.apk)
+[DEMO](BluetoothMap-INF8405-TP2.apk)
 
 [Lab report](INF8405_TP2_2169358_1961278_1955204_1933097.pdf)
 
