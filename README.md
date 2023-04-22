@@ -1,10 +1,16 @@
-# INF8405 TP2: Bluetooth Map
+# INF8405 Project: Bluetooth Map
+
+[Guidelines](INF8405%20-%20Projet%20-%20H2023.pdf)
+
+[DEMO PROJECT](BluetoothMap-INF8405.apk)
+
+## TP2
 
 [Guidelines](INF8405%20-%20TP2%20-%20H2023.pdf)
 
 [DEMO](BluetoothMap-INF8405-TP2.apk)
 
-[Lab report](INF8405_TP2_2169358_1961278_1955204_1933097.pdf)
+[Lab report TP2](INF8405_TP2_2169358_1961278_1955204_1933097.pdf)
 
 ## By
 
