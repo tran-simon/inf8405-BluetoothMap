@@ -195,7 +195,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         registerReceiver(receiver, IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED))
         registerReceiver(receiver, IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED))
         registerReceiver(receiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
-
         enableBluetooth()
 
         devicesListAdapter = DevicesListAdapter(this, deviceList)
@@ -233,7 +232,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         }
 
         swapLocaleButton.setOnCheckedChangeListener { _, isChecked -> swapLocale(isChecked) }
-
 
     }
 

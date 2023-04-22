@@ -2,7 +2,10 @@ package com.inf8405.bluetoothmap
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -11,6 +14,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ToggleButton
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat.registerReceiver
 import androidx.fragment.app.DialogFragment
 
 import com.google.android.material.textfield.TextInputEditText
@@ -72,11 +76,20 @@ class SensorsDialogFragment : DialogFragment(), SensorEventListener {
         super.onResume()
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
         sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL)
+        activity.registerReceiver(mBatteryReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
     }
 
     override fun onPause() {
         super.onPause()
         sensorManager.unregisterListener(this)
+        activity.unregisterReceiver(mBatteryReceiver)
+    }
+
+    private val mBatteryReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(arg0: Context?, intent: Intent) {
+            setAppBatteryUsage()
+            setScanBatteryUsage()
+        }
     }
 
     override fun onSensorChanged(sensorEvent: SensorEvent?) {
