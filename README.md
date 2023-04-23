@@ -4,6 +4,8 @@
 
 [DEMO PROJECT](BluetoothMap-INF8405.apk)
 
+[Lab report](INF8405_projet_1933097_1955204_2169358_1961278.pdf)
+
 ## TP2
 
 [Guidelines](INF8405%20-%20TP2%20-%20H2023.pdf)
