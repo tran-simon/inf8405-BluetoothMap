@@ -1,14 +1,7 @@
 package com.inf8405.bluetoothmap
 
-import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.BatteryManager
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.lifecycle.ViewModelProvider.NewInstanceFactory.Companion.instance
-import java.util.*
 
 
 class AnalyticsHandler {
