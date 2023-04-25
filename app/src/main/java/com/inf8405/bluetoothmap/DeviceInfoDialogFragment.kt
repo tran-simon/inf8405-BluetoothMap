@@ -22,10 +22,16 @@ class DeviceInfoDialogFragment(private val device: DeviceData, private val docum
     private lateinit var btnStar: MaterialButton
     private lateinit var btnShare: MaterialButton
 
+    /**
+     * Premiere fonction appelée, permet d'initialiser tout
+     */
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         activity = requireActivity() as MainActivity
 
+        // On applique le layout
         dialogView = View.inflate(activity, R.layout.dialog_device_info, null)
+
+        // On va chercher l'élément visuel et on le met dans un objet pour pouvoir le modifier
         dialogTitle = dialogView.findViewById(R.id.textView_title)
         dialogText = dialogView.findViewById(R.id.textView_deviceDescription)
 
@@ -38,9 +44,11 @@ class DeviceInfoDialogFragment(private val device: DeviceData, private val docum
         btnShare.setOnClickListener(this)
 
         if (device.starred) {
+            // On met l'icone d'étoile pleine si l'appareil est favori
             btnStar.setIconResource(R.drawable.baseline_star_24)
         }
 
+        // On met en texte les données de l'appareil
         dialogTitle.text = device.toString()
         dialogText.text = device.getDeviceInfo()
 
@@ -65,6 +73,8 @@ class DeviceInfoDialogFragment(private val device: DeviceData, private val docum
 
     private fun star() {
         device.starred = !device.starred
+
+        // On change l'icone pour une etoile pleine si l'appareil est favori
         btnStar.setIconResource(if (device.starred) R.drawable.baseline_star_24 else R.drawable.baseline_star_outline_24)
         document.update(hashMapOf<String, Any>(
             "starred" to device.starred
@@ -75,11 +85,13 @@ class DeviceInfoDialogFragment(private val device: DeviceData, private val docum
     private fun share() {
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, device.getDeviceInfo())
+            putExtra(Intent.EXTRA_TEXT, device.getDeviceInfo()) // On met les informations de l'appareil dans l'intent
             type = "text/plain"
         }
 
         val shareIntent = Intent.createChooser(sendIntent, null)
+
+        // On ouvre le menu Partager
         startActivity(shareIntent)
     }
 
@@ -87,6 +99,8 @@ class DeviceInfoDialogFragment(private val device: DeviceData, private val docum
         val gmmIntentUri: Uri = Uri.parse("google.navigation:q=${device.latLng.latitude},${device.latLng.longitude}&mode=w")
         val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
         mapIntent.setPackage("com.google.android.apps.maps")
+
+        // Permet de démarrer Google Maps avec les informations du Intent
         startActivity(mapIntent)
     }
 }
